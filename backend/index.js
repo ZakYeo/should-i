@@ -16,7 +16,6 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Apply the rate limiting middleware to all requests
 app.use(limiter);
 
 app.get('/api/check-coat', async (req, res) => {
@@ -35,7 +34,7 @@ app.get('/api/check-coat', async (req, res) => {
       location,
       temperature: `${temperature} °C`,
       shouldWearCoat,
-      weather: weatherData.weather[0].description  // Basic weather description
+      weather: weatherData.weather[0].description
     });
   } catch (error) {
     console.error('Error fetching weather data:', error);
