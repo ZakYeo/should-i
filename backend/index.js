@@ -2,12 +2,22 @@ import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
-
+import rateLimit from 'express-rate-limit';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const API_KEY = process.env.API_KEY;
 app.use(cors());
+
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000,  // 10 minutes
+  max: 10,  // Limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply the rate limiting middleware to all requests
+app.use(limiter);
 
 app.get('/api/check-coat', async (req, res) => {
   const location = 'London';
