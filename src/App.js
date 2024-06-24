@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { checkCoat } from './api';
+import { WiDaySunny, WiHumidity, WiStrongWind } from 'react-icons/wi';
 import './App.css';
 
 function App() {
@@ -23,20 +24,47 @@ function App() {
         autoPlay
         loop
         muted
-        className="absolute w-auto min-w-full min-h-full max-w-none filter blur-md"
+        className="absolute w-auto min-w-full min-h-full max-w-none filter blur-sm"
       >
         <source src={`${process.env.PUBLIC_URL}/bg-clouds.mp4`} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <div className="relative bg-white bg-opacity-70 p-10 rounded-lg shadow-lg text-center animate-fadeIn">
-        <h1 className="text-4xl font-bold mb-4 text-black drop-shadow-lg">Should you wear a coat today?</h1>
-        {shouldWearCoat !== null ? (
-          <p className={`text-2xl text-black drop-shadow-lg ${shouldWearCoat ? 'text-green-500' : 'text-red-500'}`}>
-            {shouldWearCoat ? 'Yes, you should wear a coat!' : 'No, you don\'t need a coat!'}
-          </p>
-        ) : (
-          <p className="text-2xl text-gray-200 drop-shadow-lg">Loading...</p>
-        )}
+      <div className="relative bg-white bg-opacity-70 p-10 rounded-lg shadow-lg text-center animate-fadeIn flex items-center">
+        <div className="mr-10">
+          <h1 className="text-4xl font-bold mb-4 text-black drop-shadow-lg">Should you wear a coat today?</h1>
+          {shouldWearCoat !== null ? (
+            <p className={`text-2xl text-black drop-shadow-lg ${shouldWearCoat ? 'text-green-500' : 'text-red-500'}`}>
+              {shouldWearCoat ? 'Yes, you should wear a coat!' : 'No, you don\'t need a coat!'}
+            </p>
+          ) : (
+            <p className="text-2xl text-gray-200 drop-shadow-lg">Loading...</p>
+          )}
+        </div>
+        <WeatherCard />
+      </div>
+    </div>
+  );
+}
+
+function WeatherCard() {
+  return (
+    <div className="bg-white bg-opacity-90 p-5 rounded-lg shadow-lg text-left w-80">
+      <div className="flex items-center mb-4">
+        <WiDaySunny className="text-yellow-500 text-5xl mr-3" />
+        <div>
+          <h2 className="text-2xl font-bold text-blue-800">Sunny</h2>
+          <p className="text-gray-800">22°C</p>
+        </div>
+      </div>
+      <div className="flex justify-between text-gray-800">
+        <div className="flex items-center">
+          <WiHumidity className="text-blue-500 text-3xl mr-2" />
+          <span>Humidity: 45%</span>
+        </div>
+        <div className="flex items-center">
+          <WiStrongWind className="text-green-500 text-3xl mr-2" />
+          <span>Wind: 10 km/h</span>
+        </div>
       </div>
     </div>
   );
