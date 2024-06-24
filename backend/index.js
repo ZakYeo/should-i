@@ -67,15 +67,15 @@ app.get('/api/check-coat', async (req, res) => {
     }
     */
 
-    const temperature = weatherData.main.temp;
-    const shouldWearCoat = temperature < 15;
+    const shouldWearCoat = weatherData.main.feels_like < 15;
     console.log(weatherData);
 
     res.json({
       location: weatherData.name,
-      temperature: `${temperature} °C`,
       shouldWearCoat,
-      weather: weatherData.weather[0].description
+      ...weatherData.weather[0],
+      wind: weatherData.wind,
+      ...weatherData.main
     });
   } catch (error) {
     console.error('Error fetching weather data:', error);
