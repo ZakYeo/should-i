@@ -5,19 +5,44 @@ import './App.css';
 
 function App() {
   const [shouldWearCoat, setShouldWearCoat] = useState(null);
+  const [latLon, setLatLon] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await checkCoat();
-        setShouldWearCoat(data.shouldWearCoat);
-      } catch (error) {
-        console.error('Error fetching coat status', error);
-      }
-    };
-    fetchData();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLatLon({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+          setLoading(false);
+        },
+        (error) => {
+          console.error('Error obtaining location:', error);
+          setLoading(false);
+        }
+      );
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    if (latLon) {
+      const fetchData = async () => {
+        try {
+          const data = await checkCoat(latLon.latitude, latLon.longitude);
+          console.log(data);
+          setShouldWearCoat(data.shouldWearCoat);
+        } catch (error) {
+          console.error('Error fetching coat status', error);
+        }
+      };
+      fetchData();
+    }
+  }, [latLon]);
   return (
     <div className="relative flex items-center justify-center min-h-screen overflow-hidden">
       <video
@@ -68,6 +93,37 @@ function WeatherCard() {
       </div>
     </div>
   );
+}
+
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition, showError);
+  } else {
+    console.log("Geolocation is not supported by this browser.");
+  }
+}
+
+function showPosition(position) {
+  console.log("Latitude: " + position.coords.latitude +
+    " Longitude: " + position.coords.longitude);
+}
+
+function showError(error) {
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      console.log("User denied the request for Geolocation.");
+      break;
+    case error.POSITION_UNAVAILABLE:
+      console.log("Location information is unavailable.");
+      break;
+    case error.TIMEOUT:
+      console.log("The request to get user location timed out.");
+      break;
+    case error.UNKNOWN_ERROR:
+      console.log("An unknown error occurred.");
+      break;
+  }
 }
 
 export default App;

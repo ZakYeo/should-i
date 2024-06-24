@@ -8,6 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const API_KEY = process.env.API_KEY;
 app.use(cors());
+app.use(express.json());
 
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,  // 10 minutes
@@ -19,19 +20,25 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.get('/api/check-coat', async (req, res) => {
+  const { lat, lon } = req.query;
+  if (!lat || !lon) {
+    return res.status(400).json({ error: 'Latitude and longitude are required' });
+  }
   const location = 'London';
   const url = `http://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}&units=metric`;
   console.log(process.env.API_KEY)
   try {
     const response = await fetch(url);
     const weatherData = await response.json();
-    console.log(weatherData);
-    const temperature = weatherData.main.temp;
+    if (!weatherData || weatherData.cod !== 200) {
+      throw new Error('Failed to fetch weather data');
+    }
 
-    const shouldWearCoat = temperature < 15; //TODO better logic here
-    console.log(weatherData);
+    const temperature = weatherData.main.temp;
+    const shouldWearCoat = temperature < 15;
+
     res.json({
-      location,
+      location: weatherData.name,
       temperature: `${temperature} °C`,
       shouldWearCoat,
       weather: weatherData.weather[0].description
@@ -40,6 +47,7 @@ app.get('/api/check-coat', async (req, res) => {
     console.error('Error fetching weather data:', error);
     res.status(500).json({ error: 'Failed to fetch weather data' });
   }
+
 });
 
 app.listen(PORT, () => {
