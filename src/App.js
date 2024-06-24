@@ -7,6 +7,7 @@ function App() {
   const [shouldWearCoat, setShouldWearCoat] = useState(null);
   const [latLon, setLatLon] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [weatherData, setWeatherData] = useState(null)
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -36,6 +37,8 @@ function App() {
           const data = await checkCoat(latLon.latitude, latLon.longitude);
           console.log(data);
           setShouldWearCoat(data.shouldWearCoat);
+          setWeatherData(data);
+          console.log(data.wind.speed)
         } catch (error) {
           console.error('Error fetching coat status', error);
         }
@@ -65,30 +68,30 @@ function App() {
             <p className="text-2xl text-gray-200 drop-shadow-lg">Loading...</p>
           )}
         </div>
-        <WeatherCard />
+        {weatherData && <WeatherCard title={weatherData.main} temp={weatherData.temp} wind={weatherData.wind} humidity={weatherData.humidity} />}
       </div>
     </div>
   );
 }
 
-function WeatherCard() {
+function WeatherCard({ title, temp, wind, humidity }) {
   return (
     <div className="bg-white bg-opacity-90 p-5 rounded-lg shadow-lg text-left w-80">
       <div className="flex items-center mb-4">
         <WiDaySunny className="text-yellow-500 text-5xl mr-3" />
         <div>
-          <h2 className="text-2xl font-bold text-blue-800">Sunny</h2>
-          <p className="text-gray-800">22°C</p>
+          <h2 className="text-2xl font-bold text-blue-800">{title}</h2>
+          <p className="text-gray-800">{temp}°C</p>
         </div>
       </div>
       <div className="flex justify-between text-gray-800">
         <div className="flex items-center">
           <WiHumidity className="text-blue-500 text-3xl mr-2" />
-          <span>Humidity: 45%</span>
+          <span>Humidity: {humidity}%</span>
         </div>
         <div className="flex items-center">
           <WiStrongWind className="text-green-500 text-3xl mr-2" />
-          <span>Wind: 10 km/h</span>
+          <span>Wind: {wind.speed}m/h</span>
         </div>
       </div>
     </div>
