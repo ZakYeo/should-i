@@ -17,16 +17,13 @@ function App() {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
           });
-          setLoading(false);
         },
         (error) => {
           console.error('Error obtaining location:', error);
-          setLoading(false);
         }
       );
     } else {
       console.log("Geolocation is not supported by this browser.");
-      setLoading(false);
     }
   }, []);
 
@@ -38,6 +35,7 @@ function App() {
           console.log(data);
           setShouldWearCoat(data.shouldWearCoat);
           setWeatherData(data);
+          setLoading(false);
           console.log(data.wind.speed)
         } catch (error) {
           console.error('Error fetching coat status', error);
@@ -60,16 +58,26 @@ function App() {
       <div className="relative bg-white bg-opacity-70 p-10 rounded-lg shadow-lg text-center animate-fadeIn flex items-center font-inter">
         <div className="mr-10">
           <h1 className="text-5xl font-bold mb-4 text-gray-800 drop-shadow-lg">Should you wear a coat today?</h1>
-          {shouldWearCoat !== null ? (
+          {loading ? (
+            <Spinner />
+          ) : shouldWearCoat !== null ? (
             <p className={`text-3xl font-medium mb-2 text-gray-800 drop-shadow-lg ${shouldWearCoat ? 'text-green-500' : 'text-red-500'}`}>
               {shouldWearCoat ? 'Yes, you should wear a coat!' : 'No, you don\'t need a coat!'}
             </p>
           ) : (
-            <p className="text-3xl text-gray-400 drop-shadow-lg">Loading...</p>
+            <p className="text-3xl text-gray-400 drop-shadow-lg">Unable to fetch data.</p>
           )}
         </div>
         {weatherData && <WeatherCard title={weatherData.main} temp={weatherData.temp} wind={weatherData.wind} humidity={weatherData.humidity} />}
       </div>
+    </div>
+  );
+}
+
+function Spinner() {
+  return (
+    <div className="flex justify-center items-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
     </div>
   );
 }
