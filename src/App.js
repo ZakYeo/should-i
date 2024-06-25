@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { checkCoat } from './api';
-import { WiDaySunny, WiHumidity, WiStrongWind } from 'react-icons/wi';
+import { WiDaySunny, WiHumidity, WiStrongWind, WiDayCloudy, WiRain, WiSnow, WiThunderstorm, WiSprinkle, WiFog } from 'react-icons/wi';
 import './App.css';
 
 function App() {
@@ -68,7 +68,7 @@ function App() {
             <p className="text-3xl text-gray-400 drop-shadow-lg">Unable to fetch data.</p>
           )}
         </div>
-        {weatherData && <WeatherCard title={weatherData.main} temp={weatherData.temp} wind={weatherData.wind} humidity={weatherData.humidity} />}
+        {weatherData && <WeatherCard weatherData={weatherData} />}
       </div>
     </div>
   );
@@ -82,25 +82,41 @@ function Spinner() {
   );
 }
 
-function WeatherCard({ title, temp, wind, humidity }) {
+function WeatherCard({ weatherData: { main, temp, wind, humidity, feels_like, temp_min, temp_max, description } }) {
+  const weatherIcon = {
+    'Clouds': <WiDayCloudy className="text-gray-500 text-5xl" />,
+    'Clear': <WiDaySunny className="text-yellow-500 text-5xl" />,
+    'Rain': <WiRain className="text-blue-500 text-5xl" />,
+    'Snow': <WiSnow className="text-white text-5xl" />,
+    'Thunderstorm': <WiThunderstorm className="text-purple-500 text-5xl" />,
+    'Drizzle': <WiSprinkle className="text-blue-300 text-5xl" />,
+    'Mist': <WiFog className="text-gray-400 text-5xl" />,
+  };
+
   return (
-    <div className="bg-white bg-opacity-90 p-5 rounded-lg shadow-lg text-left w-80">
-      <div className="flex items-center mb-4">
-        <WiDaySunny className="text-yellow-500 text-5xl mr-3" />
-        <div>
-          <h2 className="text-2xl font-bold text-blue-800">{title}</h2>
-          <p className="text-gray-800">{temp}°C</p>
+    <div className="bg-white bg-opacity-90 p-8 rounded-xl shadow-xl text-left transition-all ease-in-out duration-300 hover:shadow-2xl">
+      <div className="flex items-center mb-4 justify-between">
+        <div className="flex items-center">
+          {weatherIcon[main] || <WiDaySunny className="text-yellow-500 text-5xl" />}
+          <div className="ml-4">
+            <h2 className="text-3xl font-bold text-blue-800">{main}</h2>
+            <p className="text-xl text-gray-800">Feels like: {feels_like}°C</p>
+            <p className="text-lg text-gray-700">{temp}°C</p>
+          </div>
         </div>
       </div>
-      <div className="flex justify-between text-gray-800">
+      <div className="grid grid-cols-2 gap-4 text-gray-800 text-lg mb-4">
         <div className="flex items-center">
-          <WiHumidity className="text-blue-500 text-3xl mr-2" />
+          <WiHumidity className="text-blue-500 text-4xl mr-2" />
           <span>Humidity: {humidity}%</span>
         </div>
         <div className="flex items-center">
-          <WiStrongWind className="text-green-500 text-3xl mr-2" />
-          <span>Wind: {wind.speed}m/h</span>
+          <WiStrongWind className="text-green-500 text-4xl mr-2" />
+          <span>Wind: {wind.speed} m/h</span>
         </div>
+      </div>
+      <div className="italic text-center text-gray-600 text-lg">
+        "{description}"
       </div>
     </div>
   );
