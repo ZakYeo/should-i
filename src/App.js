@@ -57,15 +57,15 @@ function App() {
         <source src={`${process.env.PUBLIC_URL}/bg-clouds.mp4`} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <div className="relative bg-white bg-opacity-70 p-10 rounded-lg shadow-lg text-center animate-fadeIn flex items-center">
+      <div className="relative bg-white bg-opacity-70 p-10 rounded-lg shadow-lg text-center animate-fadeIn flex items-center font-inter">
         <div className="mr-10">
-          <h1 className="text-4xl font-bold mb-4 text-black drop-shadow-lg">Should you wear a coat today?</h1>
+          <h1 className="text-5xl font-bold mb-4 text-gray-800 drop-shadow-lg">Should you wear a coat today?</h1>
           {shouldWearCoat !== null ? (
-            <p className={`text-2xl text-black drop-shadow-lg ${shouldWearCoat ? 'text-green-500' : 'text-red-500'}`}>
+            <p className={`text-3xl font-medium mb-2 text-gray-800 drop-shadow-lg ${shouldWearCoat ? 'text-green-500' : 'text-red-500'}`}>
               {shouldWearCoat ? 'Yes, you should wear a coat!' : 'No, you don\'t need a coat!'}
             </p>
           ) : (
-            <p className="text-2xl text-gray-200 drop-shadow-lg">Loading...</p>
+            <p className="text-3xl text-gray-400 drop-shadow-lg">Loading...</p>
           )}
         </div>
         {weatherData && <WeatherCard title={weatherData.main} temp={weatherData.temp} wind={weatherData.wind} humidity={weatherData.humidity} />}
