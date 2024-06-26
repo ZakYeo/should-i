@@ -14,7 +14,7 @@ app.use(express.json());
 
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,  // 10 minutes
-  max: 90,  // Limit each IP to 100 requests per windowMs
+  max: 9999,  // Limit each IP to 100 requests per windowMs
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -85,23 +85,6 @@ app.get('/api/check-coat', async (req, res) => {
 
 });
 
-app.get('/api/mapsdata', async (req, res) => {
-  const { lat, lon } = req.query;
-
-  if (!lat || !lon) {
-    return res.status(400).send("Latitude and longitude are required");
-  }
-
-  const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=1500&type=restaurant&key=${MAPS_API_KEY}`;
-
-  try {
-    const response = await axios.get(url);
-    res.json(response.data);
-  } catch (error) {
-    console.error('Google Maps API error:', error);
-    res.status(500).send('Server error');
-  }
-});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
