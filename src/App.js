@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { checkCoat } from './api';
 import { WiDaySunny, WiHumidity, WiStrongWind, WiDayCloudy, WiRain, WiSnow, WiThunderstorm, WiSprinkle, WiFog } from 'react-icons/wi';
 import './App.css';
-import { GoogleMap, LoadScript, Marker, Circle } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker, Circle, useJsApiLoader } from '@react-google-maps/api';
 
 
 
@@ -13,6 +13,7 @@ function App() {
   const [latLon, setLatLon] = useState(null);
   const [loading, setLoading] = useState(true);
   const [weatherData, setWeatherData] = useState(null)
+
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -37,11 +38,9 @@ function App() {
       const fetchData = async () => {
         try {
           const data = await checkCoat(latLon.latitude, latLon.longitude);
-          console.log(data);
           setShouldWearCoat(data.shouldWearCoat);
           setWeatherData(data);
           setLoading(false);
-          console.log(data.wind.speed)
         } catch (error) {
           console.error('Error fetching coat status', error);
         }
@@ -169,8 +168,6 @@ function WeatherCard({ weatherData: { main, temp, wind, humidity, feels_like, de
 
 function MapComponent({ lat, lon }) {
   const [mapData, setMapData] = useState(null);
-  console.log(lat)
-  console.log(lon)
 
 
   const containerStyle = {
@@ -178,20 +175,11 @@ function MapComponent({ lat, lon }) {
     height: '100%'
   };
 
-  useEffect(() => {
-    fetchMapData();
-  }, []);
-
-
-  const fetchMapData = async () => {
-    const response = await fetch(`/api/mapsdata?lat=-34.397&lon=150.644`);
-    const data = await response.json();
-    setMapData(data);
-  };
 
   return (
     <LoadScript
       googleMapsApiKey={MAPS_API_KEY}
+      loadingElement={<div>Loading...</div>}
     >
       <div style={{
         padding: '20px', // Consistent padding as WeatherCard
@@ -211,10 +199,7 @@ function MapComponent({ lat, lon }) {
           center={{ lat: lat, lng: lon }}
           zoom={10}
         >
-          {/* Child components, like markers or circles */}
-          {mapData && mapData.results.map(place => (
-            <Marker key={place.id} position={{ lat: place.geometry.location.lat, lng: place.geometry.location.lng }} />
-          ))}
+          <Marker position={{ lat: lat, lng: lon }} />
         </GoogleMap>
       </div>
     </LoadScript>
