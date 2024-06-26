@@ -117,7 +117,7 @@ function Spinner() {
   );
 }
 
-function WeatherCard({ weatherData: { main, temp, wind, humidity, feels_like, temp_min, temp_max, description } }) {
+function WeatherCard({ weatherData: { main, temp, wind, humidity, feels_like, description } }) {
   const weatherIcon = {
     'Clouds': <WiDayCloudy className="text-gray-500 text-5xl" />,
     'Clear': <WiDaySunny className="text-yellow-500 text-5xl" />,
@@ -132,11 +132,9 @@ function WeatherCard({ weatherData: { main, temp, wind, humidity, feels_like, te
     <div style={{
       backgroundColor: '#ffffff',
       opacity: '0.9',
-      padding: '32px',
+      padding: '20px',
       borderRadius: '10px',
       boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-      width: '400px',
-      height: '400px',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
