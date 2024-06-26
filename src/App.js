@@ -100,7 +100,7 @@ function App() {
             <p style={{ fontSize: '24px', color: '#cbd5e0' }}>Unable to fetch data.</p>
           )}
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, gap: 10 }}>
           {weatherData && <WeatherCard weatherData={weatherData} />}
           {latLon && <MapComponent lat={latLon.latitude} lon={latLon.longitude} />}
         </div>
@@ -174,8 +174,8 @@ function MapComponent({ lat, lon }) {
 
 
   const containerStyle = {
-    width: '400px',
-    height: '400px'
+    width: '100%',
+    height: '100%'
   };
 
   useEffect(() => {
@@ -193,19 +193,32 @@ function MapComponent({ lat, lon }) {
     <LoadScript
       googleMapsApiKey={MAPS_API_KEY}
     >
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={{ lat: lat, lng: lon }}
-
-        zoom={10}
-      >
-        { /* Child components, like markers or circles */}
-        {mapData && mapData.results.map(place => (
-          <Marker key={place.id} position={{ lat: place.geometry.location.lat, lng: place.geometry.location.lng }} />
-        ))}
-      </GoogleMap>
+      <div style={{
+        padding: '20px', // Consistent padding as WeatherCard
+        backgroundColor: '#ffffff',
+        opacity: '0.9',
+        borderRadius: '10px',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+        width: '400px', // Consistent width
+        height: '400px', // Consistent height
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        transition: 'all 0.3s ease-in-out'
+      }}>
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={{ lat: lat, lng: lon }}
+          zoom={10}
+        >
+          {/* Child components, like markers or circles */}
+          {mapData && mapData.results.map(place => (
+            <Marker key={place.id} position={{ lat: place.geometry.location.lat, lng: place.geometry.location.lng }} />
+          ))}
+        </GoogleMap>
+      </div>
     </LoadScript>
-  )
+  );
 }
 
 
