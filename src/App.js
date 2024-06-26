@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { checkCoat } from './api';
 import { WiDaySunny, WiHumidity, WiStrongWind, WiDayCloudy, WiRain, WiSnow, WiThunderstorm, WiSprinkle, WiFog } from 'react-icons/wi';
 import './App.css';
-import { GoogleMap, LoadScript, Marker, Circle, useJsApiLoader } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker, Circle } from '@react-google-maps/api';
 
 
 
@@ -167,8 +167,6 @@ function WeatherCard({ weatherData: { main, temp, wind, humidity, feels_like, de
 }
 
 function MapComponent({ lat, lon }) {
-  const [mapData, setMapData] = useState(null);
-
 
   const containerStyle = {
     width: '100%',
@@ -182,13 +180,13 @@ function MapComponent({ lat, lon }) {
       loadingElement={<div>Loading...</div>}
     >
       <div style={{
-        padding: '20px', // Consistent padding as WeatherCard
+        padding: '20px',
         backgroundColor: '#ffffff',
         opacity: '0.9',
         borderRadius: '10px',
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-        width: '400px', // Consistent width
-        height: '400px', // Consistent height
+        width: '400px',
+        height: '400px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -204,37 +202,6 @@ function MapComponent({ lat, lon }) {
       </div>
     </LoadScript>
   );
-}
-
-
-function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition, showError);
-  } else {
-    console.log("Geolocation is not supported by this browser.");
-  }
-}
-
-function showPosition(position) {
-  console.log("Latitude: " + position.coords.latitude +
-    " Longitude: " + position.coords.longitude);
-}
-
-function showError(error) {
-  switch (error.code) {
-    case error.PERMISSION_DENIED:
-      console.log("User denied the request for Geolocation.");
-      break;
-    case error.POSITION_UNAVAILABLE:
-      console.log("Location information is unavailable.");
-      break;
-    case error.TIMEOUT:
-      console.log("The request to get user location timed out.");
-      break;
-    case error.UNKNOWN_ERROR:
-      console.log("An unknown error occurred.");
-      break;
-  }
 }
 
 export default App;
