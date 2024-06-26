@@ -174,6 +174,16 @@ function MapComponent({ lat, lon }) {
   };
 
 
+  const circleOptions = {
+    strokeColor: 'black',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#ADD8E6',
+    fillOpacity: 0.2,
+    center: { lat, lng: lon },
+    radius: 2000,
+  };
+
   return (
     <LoadScript
       googleMapsApiKey={MAPS_API_KEY}
@@ -195,9 +205,13 @@ function MapComponent({ lat, lon }) {
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={{ lat: lat, lng: lon }}
-          zoom={10}
+          zoom={13}
         >
           <Marker position={{ lat: lat, lng: lon }} />
+          <Circle
+            center={{ lat: lat, lng: lon }}
+            options={circleOptions}
+          />
         </GoogleMap>
       </div>
     </LoadScript>
