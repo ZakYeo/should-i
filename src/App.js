@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { checkCoat } from './api';
 import { WiDaySunny, WiHumidity, WiStrongWind, WiDayCloudy, WiRain, WiSnow, WiThunderstorm, WiSprinkle, WiFog } from 'react-icons/wi';
 import './App.css';
+import { GoogleMap, LoadScript, Marker, Circle } from '@react-google-maps/api';
+
+
+
+const MAPS_API_KEY = ""
 
 function App() {
   const [shouldWearCoat, setShouldWearCoat] = useState(null);
@@ -45,30 +50,60 @@ function App() {
     }
   }, [latLon]);
   return (
-    <div className="relative flex items-center justify-center min-h-screen overflow-hidden">
+    <div style={{
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
+      overflow: 'hidden'
+    }}>
       <video
         autoPlay
         loop
         muted
-        className="absolute w-auto min-w-full min-h-full max-w-none filter blur-sm"
+        style={{
+          position: 'absolute',
+          width: 'auto',
+          minWidth: '100%',
+          minHeight: '100%',
+          maxWidth: 'none',
+          filter: 'blur(1px)'
+        }}
       >
         <source src={`${process.env.PUBLIC_URL}/bg-clouds.mp4`} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <div className="relative bg-white bg-opacity-70 p-10 rounded-lg shadow-lg text-center animate-fadeIn flex items-center font-inter">
-        <div className="mr-10">
-          <h1 className="text-5xl font-bold mb-4 text-gray-800 drop-shadow-lg">Should you wear a coat today?</h1>
+      <div style={{
+        position: 'relative',
+        backgroundColor: 'rgba(255,255,255,0.7)',
+        padding: '40px',
+        borderRadius: '10px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        textAlign: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        fontFamily: 'Inter',
+        width: '100%',
+        maxWidth: '1120px'
+      }}>
+        <div style={{ flex: 1, textAlign: 'left', padding: '0 40px' }}>
+          <h1 style={{ fontSize: '40px', fontWeight: 'bold', marginBottom: '16px', color: '#4a5568', textShadow: '0px 4px 4px rgba(0,0,0,0.25)' }}>Should you wear a coat today?</h1>
           {loading ? (
             <Spinner />
           ) : shouldWearCoat !== null ? (
-            <p className={`text-3xl font-medium mb-2 text-gray-800 drop-shadow-lg ${shouldWearCoat ? 'text-green-500' : 'text-red-500'}`}>
-              {shouldWearCoat ? 'Yes, you should wear a coat!' : 'No, you don\'t need a coat!'}
+            <p style={{ fontSize: '24px', fontWeight: 'medium', marginBottom: '8px', color: shouldWearCoat ? '#38a169' : '#e53e3e' }}>
+              {shouldWearCoat ? 'Yes, you should wear a coat!' : 'No, you don’t need a coat!'}
             </p>
           ) : (
-            <p className="text-3xl text-gray-400 drop-shadow-lg">Unable to fetch data.</p>
+            <p style={{ fontSize: '24px', color: '#cbd5e0' }}>Unable to fetch data.</p>
           )}
         </div>
-        {weatherData && <WeatherCard weatherData={weatherData} />}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+          {weatherData && <WeatherCard weatherData={weatherData} />}
+          {latLon && <MapComponent lat={latLon.latitude} lon={latLon.longitude} />}
+        </div>
       </div>
     </div>
   );
@@ -94,32 +129,85 @@ function WeatherCard({ weatherData: { main, temp, wind, humidity, feels_like, te
   };
 
   return (
-    <div className="bg-white bg-opacity-90 p-8 rounded-xl shadow-xl text-left transition-all ease-in-out duration-300 hover:shadow-2xl">
-      <div className="flex items-center mb-4 justify-between">
-        <div className="flex items-center">
+    <div style={{
+      backgroundColor: '#ffffff',
+      opacity: '0.9',
+      padding: '32px',
+      borderRadius: '10px',
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+      width: '400px',
+      height: '400px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      transition: 'all 0.3s ease-in-out'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           {weatherIcon[main] || <WiDaySunny className="text-yellow-500 text-5xl" />}
-          <div className="ml-4">
-            <h2 className="text-3xl font-bold text-blue-800">{main}</h2>
-            <p className="text-xl text-gray-800">Feels like: {feels_like}°C</p>
-            <p className="text-lg text-gray-700">{temp}°C</p>
+          <div style={{ marginLeft: '16px' }}>
+            <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#2b6cb0' }}>{main}</h2>
+            <p style={{ fontSize: '20px', color: '#4a5568' }}>Feels like: {feels_like}°C</p>
+            <p style={{ fontSize: '18px', color: '#4a5568' }}>{temp}°C</p>
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4 text-gray-800 text-lg mb-4">
-        <div className="flex items-center">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', color: '#4a5568', fontSize: '18px', marginTop: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <WiHumidity className="text-blue-500 text-4xl mr-2" />
           <span>Humidity: {humidity}%</span>
         </div>
-        <div className="flex items-center">
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <WiStrongWind className="text-green-500 text-4xl mr-2" />
           <span>Wind: {wind.speed} m/h</span>
         </div>
       </div>
-      <div className="italic text-center text-gray-600 text-lg">
+      <div style={{ fontStyle: 'italic', textAlign: 'center', color: '#718096', fontSize: '18px', marginTop: '8px' }}>
         "{description}"
       </div>
     </div>
   );
+}
+
+function MapComponent({ lat, lon }) {
+  const [mapData, setMapData] = useState(null);
+  console.log(lat)
+  console.log(lon)
+
+
+  const containerStyle = {
+    width: '400px',
+    height: '400px'
+  };
+
+  useEffect(() => {
+    fetchMapData();
+  }, []);
+
+
+  const fetchMapData = async () => {
+    const response = await fetch(`/api/mapsdata?lat=-34.397&lon=150.644`);
+    const data = await response.json();
+    setMapData(data);
+  };
+
+  return (
+    <LoadScript
+      googleMapsApiKey={MAPS_API_KEY}
+    >
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={{ lat: lat, lng: lon }}
+
+        zoom={10}
+      >
+        { /* Child components, like markers or circles */}
+        {mapData && mapData.results.map(place => (
+          <Marker key={place.id} position={{ lat: place.geometry.location.lat, lng: place.geometry.location.lng }} />
+        ))}
+      </GoogleMap>
+    </LoadScript>
+  )
 }
 
 

@@ -3,10 +3,12 @@ import cors from 'cors';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
+
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
-const API_KEY = process.env.API_KEY;
+const WEATHER_API_KEY = process.env.API_KEY;
+const MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 app.use(cors());
 app.use(express.json());
 
@@ -26,8 +28,7 @@ app.get('/api/check-coat', async (req, res) => {
   }
   /*const location = 'London';
   const url = `http://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}&units=metric`;*/
-  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
-  console.log(process.env.API_KEY)
+  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`;
   try {
     const response = await fetch(url);
     const weatherData = await response.json();
@@ -82,6 +83,24 @@ app.get('/api/check-coat', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch weather data' });
   }
 
+});
+
+app.get('/api/mapsdata', async (req, res) => {
+  const { lat, lon } = req.query;
+
+  if (!lat || !lon) {
+    return res.status(400).send("Latitude and longitude are required");
+  }
+
+  const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=1500&type=restaurant&key=${MAPS_API_KEY}`;
+
+  try {
+    const response = await axios.get(url);
+    res.json(response.data);
+  } catch (error) {
+    console.error('Google Maps API error:', error);
+    res.status(500).send('Server error');
+  }
 });
 
 app.listen(PORT, () => {
