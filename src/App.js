@@ -3,7 +3,7 @@ import { checkCoat } from './api';
 import { WiDaySunny, WiHumidity, WiStrongWind, WiDayCloudy, WiRain, WiSnow, WiThunderstorm, WiSprinkle, WiFog } from 'react-icons/wi';
 import './App.css';
 import { GoogleMap, LoadScript, Marker, Circle } from '@react-google-maps/api';
-
+import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 
 
 const MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
@@ -49,44 +49,17 @@ function App() {
     }
   }, [latLon]);
   return (
-    <div style={{
-      position: 'relative',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '100vh',
-      overflow: 'hidden'
-    }}>
+    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', overflow: 'hidden' }}>
       <video
         autoPlay
         loop
         muted
-        style={{
-          position: 'absolute',
-          width: 'auto',
-          minWidth: '100%',
-          minHeight: '100%',
-          maxWidth: 'none',
-          filter: 'blur(1px)'
-        }}
+        style={{ position: 'absolute', width: 'auto', minWidth: '100%', minHeight: '100%', maxWidth: 'none', filter: 'blur(1px)' }}
       >
         <source src={`${process.env.PUBLIC_URL}/bg-clouds.mp4`} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-      <div style={{
-        position: 'relative',
-        backgroundColor: 'rgba(255,255,255,0.7)',
-        padding: '40px',
-        borderRadius: '10px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        textAlign: 'center',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        fontFamily: 'Inter',
-        width: '100%',
-        maxWidth: '1120px'
-      }}>
+      <div style={{ position: 'relative', backgroundColor: 'rgba(255,255,255,0.7)', padding: '40px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'Inter', width: '100%', maxWidth: '1120px' }}>
         <div style={{ flex: 1, textAlign: 'left', padding: '0 40px' }}>
           <h1 style={{ fontSize: '40px', fontWeight: 'bold', marginBottom: '16px', color: '#4a5568', textShadow: '0px 4px 4px rgba(0,0,0,0.25)' }}>Should you wear a coat today?</h1>
           {loading ? (
@@ -102,8 +75,54 @@ function App() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, gap: 10 }}>
           {weatherData && <WeatherCard weatherData={weatherData} />}
           {latLon && <MapComponent lat={latLon.latitude} lon={latLon.longitude} />}
+          <ThumbsUpOrDown />
         </div>
       </div>
+    </div>
+  );
+}
+
+
+function ThumbsUpOrDown() {
+  const [vote, setVote] = useState(null);
+
+  const handleVote = (type) => {
+    if (vote === type) {
+      setVote(null); // If they click the same vote again, it cancels it
+    } else {
+      setVote(type);
+    }
+  };
+
+  return (
+    <div style={{
+      backgroundColor: '#ffffff',
+      opacity: '0.9',
+      padding: '20px',
+      borderRadius: '10px',
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+      width: '100%', // Ensures the component stretches to the same width as other components
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      transition: 'all 0.3s ease-in-out'
+    }}>
+      <span style={{ fontSize: '16px', color: '#4a5568', marginRight: '20px' }}>Is this information accurate?</span>
+      <button onClick={() => handleVote('up')} style={{
+        fontSize: '24px',
+        color: vote === 'up' ? '#38a169' : 'black',
+        transition: 'color 0.2s ease',
+        marginRight: '10px' // Adds a gap between the buttons
+      }}>
+        <FaThumbsUp />
+      </button>
+      <button onClick={() => handleVote('down')} style={{
+        fontSize: '24px',
+        color: vote === 'down' ? '#e53e3e' : 'black',
+        transition: 'color 0.2s ease'
+      }}>
+        <FaThumbsDown />
+      </button>
     </div>
   );
 }
@@ -136,6 +155,7 @@ function WeatherCard({ weatherData: { main, temp, wind, humidity, feels_like, de
       boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
       display: 'flex',
       flexDirection: 'column',
+      width: '100%',
       alignItems: 'center',
       transition: 'all 0.3s ease-in-out'
     }}>
@@ -200,7 +220,7 @@ function MapComponent({ lat, lon }) {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        transition: 'all 0.3s ease-in-out'
+        transition: 'all 0.3s ease-in-out',
       }}>
         <GoogleMap
           mapContainerStyle={containerStyle}
