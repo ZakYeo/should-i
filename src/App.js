@@ -72,7 +72,23 @@ function App() {
             <p style={{ fontSize: '24px', color: '#cbd5e0' }}>Unable to fetch data.</p>
           )}
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, gap: 10 }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          flex: 1,
+          gap: 10,
+          backgroundColor: '#ffffff',
+          opacity: '0.9',
+          padding: '20px',
+          borderRadius: '10px',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          alignItems: 'center',
+          transition: 'all 0.3s ease-in-out'
+        }}>
           {weatherData && <WeatherCard weatherData={weatherData} />}
           {latLon && <MapComponent lat={latLon.latitude} lon={latLon.longitude} />}
           <ThumbsUpOrDown />
@@ -95,18 +111,7 @@ function ThumbsUpOrDown() {
   };
 
   return (
-    <div style={{
-      backgroundColor: '#ffffff',
-      opacity: '0.9',
-      padding: '20px',
-      borderRadius: '10px',
-      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-      width: '100%', // Ensures the component stretches to the same width as other components
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      transition: 'all 0.3s ease-in-out'
-    }}>
+    <div >
       <span style={{ fontSize: '16px', color: '#4a5568', marginRight: '20px' }}>Is this information accurate?</span>
       <button onClick={() => handleVote('up')} style={{
         fontSize: '24px',
@@ -147,18 +152,7 @@ function WeatherCard({ weatherData: { main, temp, wind, humidity, feels_like, de
   };
 
   return (
-    <div style={{
-      backgroundColor: '#ffffff',
-      opacity: '0.9',
-      padding: '20px',
-      borderRadius: '10px',
-      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-      display: 'flex',
-      flexDirection: 'column',
-      width: '100%',
-      alignItems: 'center',
-      transition: 'all 0.3s ease-in-out'
-    }}>
+    <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {weatherIcon[main] || <WiDaySunny className="text-yellow-500 text-5xl" />}
@@ -210,17 +204,9 @@ function MapComponent({ lat, lon }) {
       loadingElement={<div>Loading...</div>}
     >
       <div style={{
-        padding: '20px',
-        backgroundColor: '#ffffff',
-        opacity: '0.9',
-        borderRadius: '10px',
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-        width: '400px',
+        width: '100%',
         height: '400px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        transition: 'all 0.3s ease-in-out',
       }}>
         <GoogleMap
           mapContainerStyle={containerStyle}
