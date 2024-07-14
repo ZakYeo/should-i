@@ -111,20 +111,29 @@ function ThumbsUpOrDown() {
   };
 
   return (
-    <div >
-      <span style={{ fontSize: '16px', color: '#4a5568', marginRight: '20px' }}>Is this information accurate?</span>
+    <div style={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'flex-end', fontStyle: 'italic', gap: 7 }}>
+      <span style={{ fontSize: '16px', color: '#4a5568' }}>Is this information accurate?</span>
       <button onClick={() => handleVote('up')} style={{
-        fontSize: '24px',
+        fontSize: '20px',
         color: vote === 'up' ? '#38a169' : 'black',
         transition: 'color 0.2s ease',
-        marginRight: '10px' // Adds a gap between the buttons
+        backgroundColor: '#ffffff',
+        opacity: '0.9',
+        borderRadius: '10px',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+        padding: 5,
       }}>
         <FaThumbsUp />
       </button>
       <button onClick={() => handleVote('down')} style={{
-        fontSize: '24px',
+        fontSize: '20px',
         color: vote === 'down' ? '#e53e3e' : 'black',
-        transition: 'color 0.2s ease'
+        transition: 'color 0.2s ease',
+        backgroundColor: '#ffffff',
+        opacity: '0.9',
+        borderRadius: '10px',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+        padding: 5,
       }}>
         <FaThumbsDown />
       </button>
