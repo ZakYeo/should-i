@@ -60,7 +60,7 @@ function App() {
         Your browser does not support the video tag.
       </video>
       <div style={{ position: 'relative', backgroundColor: 'rgba(255,255,255,0.7)', padding: '40px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'Inter', width: '100%', maxWidth: '1120px' }}>
-        <div style={{ flex: 1, textAlign: 'left', padding: '0 40px' }}>
+        <div style={{ flex: 1, textAlign: 'center', padding: '0 40px' }}>
           <h1 style={{ fontSize: '40px', fontWeight: 'bold', marginBottom: '16px', color: '#4a5568', textShadow: '0px 4px 4px rgba(0,0,0,0.25)' }}>Should you wear a coat today?</h1>
           {loading ? (
             <Spinner />
