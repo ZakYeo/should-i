@@ -193,7 +193,10 @@ function CommentSection() {
                 marginTop: '10px',
                 borderColor: '#e2e8f0',
                 borderWidth: '1px',
-                borderStyle: 'solid'
+                borderStyle: 'solid',
+                wordWrap: 'break-word', // Ensures text wraps at the end of the line
+                overflowWrap: 'break-word', // Breaks the words to prevent overflow
+                wordBreak: 'break-all' // Breaks the word at any character to prevent overflow
               }}>
                 <strong>{comment.username}: </strong>{comment.text}
               </p>
@@ -224,7 +227,7 @@ function CommentSection() {
             value={comment}
             onChange={handleCommentChange}
             placeholder="Leave your comment here..."
-            style={{ width: '100%', padding: '10px', borderRadius: '5px', borderColor: '#cbd5e0', resize: 'none', height: '60px' }} // Reduced height
+            style={{ width: '100%', padding: '10px', borderRadius: '5px', borderColor: '#cbd5e0', resize: 'none', height: '80px' }}
           />
           <button onClick={handleCommentSubmit} style={{
             alignSelf: 'flex-end',
