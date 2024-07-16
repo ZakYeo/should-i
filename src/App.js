@@ -67,7 +67,7 @@ function App() {
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         textAlign: 'center',
         display: 'flex',
-        alignItems: 'stretch', // Changed from center to stretch
+        alignItems: 'stretch',
         justifyContent: 'space-between',
         fontFamily: 'Inter',
         width: '100%',
@@ -79,7 +79,7 @@ function App() {
           padding: '0 40px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between' // This helps distribute the space evenly
+          justifyContent: 'space-between'
         }}>
           <h1 style={{ fontSize: '40px', fontWeight: 'bold', marginBottom: '16px', color: '#4a5568', textShadow: '0px 4px 4px rgba(0,0,0,0.25)' }}>Should you wear a coat today?</h1>
           {loading ? (
@@ -155,15 +155,28 @@ function CommentSection() {
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
         width: '100%'
       }}>
-        <div style={{ width: '100%', justifyContent: 'flex-start', display: 'flex' }}>
-          {comments.length > 0 && <h3 style={{ color: '#4a5568' }}>Comments:</h3>}
+        <div style={{ display: 'flex', paddingBottom: 5 }}>
+          <p style={{ fontStyle: 'italic', color: '#4a5568', opacity: 0.8 }}>comments in your area:</p>
         </div>
-        {comments.map((comment, index) => (
-          <p key={index} style={{ padding: '10px', backgroundColor: '#f7fafc', borderRadius: '5px', marginTop: '10px', borderColor: '#e2e8f0', borderWidth: '1px', borderStyle: 'solid' }}>
-            <strong>{comment.username}: </strong>{comment.text}
-          </p>
-        ))}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{
+          maxHeight: '200px',
+          overflowY: 'auto'
+        }}>
+          {comments.map((comment, index) => (
+            <p key={index} style={{
+              padding: '10px',
+              backgroundColor: '#f7fafc',
+              borderRadius: '5px',
+              marginTop: '10px',
+              borderColor: '#e2e8f0',
+              borderWidth: '1px',
+              borderStyle: 'solid'
+            }}>
+              <strong>{comment.username}: </strong>{comment.text}
+            </p>
+          ))}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
           <input
             type="text"
             value={username}
