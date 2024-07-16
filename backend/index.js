@@ -86,6 +86,20 @@ app.get('/api/check-coat', async (req, res) => {
 });
 
 
+
+app.post('/api/send-feedback', async (req, res) => {
+
+
+  const { thumbsup } = req.body;
+  console.log(thumbsup);
+  res.status(200).json({ message: 'Thank you for your feedback' });
+  return;
+
+
+
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

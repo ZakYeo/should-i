@@ -12,3 +12,17 @@ export const checkCoat = async (latitude, longitude) => {
     throw error;
   }
 };
+
+
+
+export const sendFeedback = async (thumbsup) => {
+  try {
+    const response = await axios.post(`${API_URL}send-feedback`, {
+      thumbsup: thumbsup
+    });
+    console.log(response);
+  } catch (error) {
+    console.error('Error checking coat status', error);
+    throw error;
+  }
+};
