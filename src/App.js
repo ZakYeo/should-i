@@ -81,16 +81,36 @@ function App() {
           flexDirection: 'column',
           justifyContent: 'space-between'
         }}>
-          <h1 style={{ fontSize: '40px', fontWeight: 'bold', marginBottom: '16px', color: '#4a5568', textShadow: '0px 4px 4px rgba(0,0,0,0.25)' }}>Should you wear a coat today?</h1>
-          {loading ? (
-            <Spinner />
-          ) : shouldWearCoat !== null ? (
-            <p style={{ fontSize: '24px', fontWeight: 'medium', marginBottom: '8px', color: shouldWearCoat ? '#38a169' : '#e53e3e' }}>
-              {shouldWearCoat ? 'Yes, you should wear a coat!' : 'No, you don’t need a coat!'}
-            </p>
-          ) : (
-            <p style={{ fontSize: '24px', color: '#cbd5e0' }}>Unable to fetch data.</p>
-          )}
+
+          <div style={{
+            flex: 1,
+            padding: '0 40px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-evenly',
+            gap: 10,
+            backgroundColor: '#ffffff',
+            opacity: '0.9',
+            padding: '20px',
+            borderRadius: '10px',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            alignItems: 'center',
+            transition: 'all 0.3s ease-in-out'
+          }}>
+            <h1 style={{ fontSize: '40px', fontWeight: 'bold', marginBottom: '16px', color: '#4a5568', textShadow: '0px 4px 4px rgba(0,0,0,0.25)' }}>Should you wear a coat today?</h1>
+            {loading ? (
+              <Spinner />
+            ) : shouldWearCoat !== null ? (
+              <p style={{ fontSize: '24px', fontWeight: 'medium', marginBottom: '8px', color: shouldWearCoat ? '#38a169' : '#e53e3e' }}>
+                {shouldWearCoat ? 'Yes, you should wear a coat!' : 'No, you don’t need a coat!'}
+              </p>
+            ) : (
+              <p style={{ fontSize: '24px', color: '#cbd5e0' }}>Unable to fetch data.</p>
+            )}
+          </div>
           <CommentSection />
 
         </div>
