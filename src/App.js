@@ -176,26 +176,39 @@ function CommentSection() {
         width: '100%'
       }}>
         <div style={{ display: 'flex', paddingBottom: 5 }}>
-          <p style={{ fontStyle: 'italic', color: '#4a5568', opacity: 0.8 }}>comments in your area:</p>
+          <p style={{ fontStyle: 'italic', color: '#4a5568', opacity: 0.8, visibility: comments.length > 0 ? 'visible' : 'hidden' }}>comments in your area:</p>
         </div>
-        <div style={{
-          maxHeight: '200px',
-          overflowY: 'auto'
-        }}>
-          {comments.map((comment, index) => (
-            <p key={index} style={{
-              padding: '10px',
-              backgroundColor: '#f7fafc',
-              borderRadius: '5px',
-              marginTop: '10px',
-              borderColor: '#e2e8f0',
-              borderWidth: '1px',
-              borderStyle: 'solid'
-            }}>
-              <strong>{comment.username}: </strong>{comment.text}
-            </p>
-          ))}
-        </div>
+
+        {comments.length > 0 ? (
+          <div style={{
+            minHeight: '200px',
+            maxHeight: '200px',
+            overflowY: 'auto'
+          }}>
+            {comments.map((comment, index) => (
+              <p key={index} style={{
+                padding: '10px',
+                backgroundColor: '#f7fafc',
+                borderRadius: '5px',
+                marginTop: '10px',
+                borderColor: '#e2e8f0',
+                borderWidth: '1px',
+                borderStyle: 'solid'
+              }}>
+                <strong>{comment.username}: </strong>{comment.text}
+              </p>
+            ))}
+          </div>
+        ) : (
+          <div style={{
+            height: '200px', // Ensures the box size remains consistent
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <p style={{ fontStyle: 'italic', color: '#4a5568', opacity: 0.8 }}>No comments to display in this area. <br /><br />Add one!</p>
+          </div>
+        )}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
           <input
             type="text"
