@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { checkCoat } from './api';
+import { checkCoat, sendFeedback } from './api';
 import { WiDaySunny, WiHumidity, WiStrongWind, WiDayCloudy, WiRain, WiSnow, WiThunderstorm, WiSprinkle, WiFog } from 'react-icons/wi';
 import './App.css';
 import { GoogleMap, LoadScript, Marker, Circle } from '@react-google-maps/api';
@@ -71,6 +71,8 @@ function App() {
           ) : (
             <p style={{ fontSize: '24px', color: '#cbd5e0' }}>Unable to fetch data.</p>
           )}
+          <CommentSection />
+
         </div>
         <div style={{
           display: 'flex',
@@ -99,6 +101,71 @@ function App() {
 }
 
 
+
+function CommentSection() {
+  const [username, setUsername] = useState('');
+  const [comment, setComment] = useState('');
+  const [comments, setComments] = useState([]);
+
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const handleCommentChange = (e) => {
+    setComment(e.target.value);
+  };
+
+  const handleCommentSubmit = () => {
+    if (username.trim() !== '' && comment.trim() !== '') {
+      const newComment = { username: username, text: comment };
+      setComments([...comments, newComment]);
+      setComment('');
+      setUsername('');
+    }
+  };
+
+  return (
+    <div style={{ width: '100%', marginTop: '20px' }}>
+      <div style={{
+        backgroundColor: '#ffffff',
+        padding: '20px',
+        borderRadius: '10px',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+        width: '100%'
+      }}>
+        <div style={{ width: '100%', justifyContent: 'flex-start', display: 'flex' }}>
+          {comments.length > 0 && <h3 style={{ color: '#4a5568' }}>Comments:</h3>}
+        </div>
+        {comments.map((comment, index) => (
+          <p key={index} style={{ padding: '10px', backgroundColor: '#f7fafc', borderRadius: '5px', marginTop: '10px', borderColor: '#e2e8f0', borderWidth: '1px', borderStyle: 'solid' }}>
+            <strong>{comment.username}: </strong>{comment.text}
+          </p>
+        ))}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <input
+            type="text"
+            value={username}
+            onChange={handleUsernameChange}
+            placeholder="Your username..."
+            style={{ width: '100%', padding: '10px', borderRadius: '5px', borderColor: '#cbd5e0' }}
+          />
+          <textarea
+            value={comment}
+            onChange={handleCommentChange}
+            placeholder="Leave your comment here..."
+            style={{ width: '100%', padding: '10px', borderRadius: '5px', borderColor: '#cbd5e0', resize: 'none' }}
+          />
+          <button onClick={handleCommentSubmit} style={{ alignSelf: 'flex-end', padding: '10px 20px', borderRadius: '5px', backgroundColor: '#4a5568', color: '#fff', border: 'none' }}>
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
 function ThumbsUpOrDown() {
   const [vote, setVote] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -112,8 +179,10 @@ function ThumbsUpOrDown() {
       if (vote === type) {
         setVote(null);
         setShowFeedback(false);
+
       } else {
         setVote(type);
+        sendFeedback(type === "up" ? true : false)
         setShowFeedback(true);
       }
       setOpacity(1);  // Start fade in
