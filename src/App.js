@@ -175,17 +175,17 @@ function CommentSection() {
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
         width: '100%'
       }}>
-        <div style={{ display: 'flex', paddingBottom: 5 }}>
-          <p style={{ fontStyle: 'italic', color: '#4a5568', opacity: 0.8, visibility: comments.length > 0 ? 'visible' : 'hidden' }}>comments in your area:</p>
-        </div>
-
-        {comments.length > 0 ? (
-          <div style={{
-            minHeight: '200px',
-            maxHeight: '200px',
-            overflowY: 'auto'
-          }}>
-            {comments.map((comment, index) => (
+        <div style={{
+          minHeight: '200px',
+          maxHeight: '200px',
+          overflowY: 'auto',
+          border: '1px solid #4a5568',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: comments.length > 0 ? 'start' : 'center',
+        }}>
+          {comments.length > 0 ? (
+            comments.map((comment, index) => (
               <p key={index} style={{
                 padding: '10px',
                 backgroundColor: '#f7fafc',
@@ -197,19 +197,22 @@ function CommentSection() {
               }}>
                 <strong>{comment.username}: </strong>{comment.text}
               </p>
-            ))}
-          </div>
-        ) : (
-          <div style={{
-            height: '200px', // Ensures the box size remains consistent
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <p style={{ fontStyle: 'italic', color: '#4a5568', opacity: 0.8 }}>No comments to display in this area. <br /><br />Add one!</p>
-          </div>
-        )}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
+            ))
+          ) : (
+            <p style={{ fontStyle: 'italic', color: '#4a5568', opacity: 0.8, textAlign: 'center', width: '100%' }}>
+              No comments to display in this area. <br /> Add one!
+            </p>
+          )}
+        </div>
+
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          marginTop: '20px',
+          padding: '10px',
+          border: '1px solid #4a5568',
+        }}>
           <input
             type="text"
             value={username}
@@ -221,9 +224,16 @@ function CommentSection() {
             value={comment}
             onChange={handleCommentChange}
             placeholder="Leave your comment here..."
-            style={{ width: '100%', padding: '10px', borderRadius: '5px', borderColor: '#cbd5e0', resize: 'none' }}
+            style={{ width: '100%', padding: '10px', borderRadius: '5px', borderColor: '#cbd5e0', resize: 'none', height: '60px' }} // Reduced height
           />
-          <button onClick={handleCommentSubmit} style={{ alignSelf: 'flex-end', padding: '10px 20px', borderRadius: '5px', backgroundColor: '#4a5568', color: '#fff', border: 'none' }}>
+          <button onClick={handleCommentSubmit} style={{
+            alignSelf: 'flex-end',
+            padding: '10px 20px',
+            borderRadius: '5px',
+            backgroundColor: '#4a5568',
+            color: '#fff',
+            border: 'none'
+          }}>
             Submit
           </button>
         </div>
