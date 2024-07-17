@@ -175,6 +175,9 @@ function CommentSection() {
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
         width: '100%'
       }}>
+        <div style={{ display: 'flex' }}>
+          <p style={{ fontStyle: 'italic', color: '#4a5568', opacity: 0.8, visibility: comments.length > 0 ? 'visible' : 'hidden' }}>comments in your area:</p>
+        </div>
         <div style={{
           minHeight: '200px',
           maxHeight: '200px',
@@ -194,9 +197,9 @@ function CommentSection() {
                 borderColor: '#e2e8f0',
                 borderWidth: '1px',
                 borderStyle: 'solid',
-                wordWrap: 'break-word', // Ensures text wraps at the end of the line
-                overflowWrap: 'break-word', // Breaks the words to prevent overflow
-                wordBreak: 'break-all' // Breaks the word at any character to prevent overflow
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word',
+                wordBreak: 'break-all'
               }}>
                 <strong>{comment.username}: </strong>{comment.text}
               </p>
