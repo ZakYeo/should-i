@@ -189,20 +189,55 @@ function CommentSection() {
         }}>
           {comments.length > 0 ? (
             comments.map((comment, index) => (
-              <p key={index} style={{
-                padding: '10px',
+              <div style={{
+                display: 'flex', width: '100%', backgroundColor: 'red',
                 backgroundColor: '#f7fafc',
                 borderRadius: '5px',
-                marginTop: '10px',
                 borderColor: '#e2e8f0',
                 borderWidth: '1px',
                 borderStyle: 'solid',
-                wordWrap: 'break-word',
-                overflowWrap: 'break-word',
-                wordBreak: 'break-all'
               }}>
-                <strong>{comment.username}: </strong>{comment.text}
-              </p>
+                <p key={index} style={{
+                  padding: '10px',
+                  marginTop: '10px',
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word',
+                  wordBreak: 'break-all',
+                  width: '100%'
+                }}>
+                  <strong>{comment.username}: </strong>{comment.text}
+                </p>
+                <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                  <button onClick={() => { }} style={{
+                    fontSize: '15px',
+                    color: 'black',
+                    backgroundColor: '#ffffff',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+                    height: 20,
+                    width: 20,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    display: 'flex'
+                  }}>
+                    <FaThumbsUp />
+                  </button>
+                  <button onClick={() => { }} style={{
+                    fontSize: '15px',
+                    color: 'black',
+                    backgroundColor: '#ffffff',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+                    height: 20,
+                    width: 20,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    display: 'flex'
+                  }}>
+                    <FaThumbsDown />
+                  </button>
+                </div>
+              </div>
             ))
           ) : (
             <p style={{ fontStyle: 'italic', color: '#4a5568', opacity: 0.8, textAlign: 'center', width: '100%' }}>
