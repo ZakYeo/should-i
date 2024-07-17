@@ -144,11 +144,12 @@ function App() {
 
 
 
+
 function CommentSection() {
   const [username, setUsername] = useState('');
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
-  const [thumbs, setThumbs] = useState({});
+  const currentUser = "exampleUsername";
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -160,7 +161,12 @@ function CommentSection() {
 
   const handleCommentSubmit = () => {
     if (username.trim() !== '' && comment.trim() !== '') {
-      const newComment = { username: username, text: comment };
+      const newComment = {
+        username: username,
+        text: comment,
+        upVotes: [],
+        downVotes: []
+      };
       setComments([...comments, newComment]);
       setComment('');
       setUsername('');
@@ -168,13 +174,36 @@ function CommentSection() {
   };
 
   const handleThumbUpOrDown = (commentIndex, type) => {
-    setThumbs(prev => ({
-      ...prev,
-      [commentIndex]: type
+    setComments(comments.map((comment, index) => {
+      if (index === commentIndex) {
+        let newUpVotes = comment.upVotes.slice();
+        let newDownVotes = comment.downVotes.slice();
+
+        if (type === 'up') {
+          if (newUpVotes.includes(currentUser)) {
+            newUpVotes = newUpVotes.filter(user => user !== currentUser);
+          } else {
+            newUpVotes.push(currentUser);
+            newDownVotes = newDownVotes.filter(user => user !== currentUser);
+          }
+        } else if (type === 'down') {
+          if (newDownVotes.includes(currentUser)) {
+            newDownVotes = newDownVotes.filter(user => user !== currentUser);
+          } else {
+            newDownVotes.push(currentUser);
+            newUpVotes = newUpVotes.filter(user => user !== currentUser);
+          }
+        }
+
+        return {
+          ...comment,
+          upVotes: newUpVotes,
+          downVotes: newDownVotes
+        };
+      }
+      return comment;
     }));
   };
-
-
 
   return (
     <div style={{ width: '100%', marginTop: '20px' }}>
@@ -200,8 +229,7 @@ function CommentSection() {
           {comments.length > 0 ? (
             comments.map((comment, index) => (
               <div style={{
-                display: 'flex', width: '100%', backgroundColor: 'red',
-                backgroundColor: '#f7fafc',
+                display: 'flex', width: '100%', backgroundColor: '#f7fafc',
                 borderRadius: '5px',
                 borderColor: '#e2e8f0',
                 borderWidth: '1px',
@@ -218,34 +246,40 @@ function CommentSection() {
                   <strong>{comment.username}: </strong>{comment.text}
                 </p>
                 <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-                  <button onClick={() => handleThumbUpOrDown(index, 'up')} style={{
-                    fontSize: '15px',
-                    color: thumbs[index] === "up" ? 'green' : 'black',
-                    backgroundColor: '#ffffff',
-                    borderRadius: '10px',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-                    height: 20,
-                    width: 20,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    display: 'flex'
-                  }}>
-                    <FaThumbsUp />
-                  </button>
-                  <button onClick={() => handleThumbUpOrDown(index, 'down')} style={{
-                    fontSize: '15px',
-                    color: thumbs[index] === "down" ? 'red' : 'black',
-                    backgroundColor: '#ffffff',
-                    borderRadius: '10px',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-                    height: 20,
-                    width: 20,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    display: 'flex'
-                  }}>
-                    <FaThumbsDown />
-                  </button>
+                  <div>
+                    <button onClick={() => handleThumbUpOrDown(index, 'up')} style={{
+                      fontSize: '15px',
+                      color: comment.upVotes.includes(currentUser) ? 'green' : 'black',
+                      backgroundColor: '#ffffff',
+                      borderRadius: '10px',
+                      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+                      height: 20,
+                      width: 20,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      display: 'flex'
+                    }}>
+                      <FaThumbsUp />
+                    </button>
+                    <div style={{ textAlign: 'center', fontSize: 10, fontWeight: 900 }}>{comment.upVotes.length}</div>
+                  </div>
+                  <div>
+                    <button onClick={() => handleThumbUpOrDown(index, 'down')} style={{
+                      fontSize: '15px',
+                      color: comment.downVotes.includes(currentUser) ? 'red' : 'black',
+                      backgroundColor: '#ffffff',
+                      borderRadius: '10px',
+                      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+                      height: 20,
+                      width: 20,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      display: 'flex'
+                    }}>
+                      <FaThumbsDown />
+                    </button>
+                    <div style={{ textAlign: 'center', fontSize: 10, fontWeight: 900 }}>{comment.downVotes.length}</div>
+                  </div>
                 </div>
               </div>
             ))
@@ -255,7 +289,6 @@ function CommentSection() {
             </p>
           )}
         </div>
-
         <div style={{
           display: 'flex',
           flexDirection: 'column',
