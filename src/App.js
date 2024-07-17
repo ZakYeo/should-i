@@ -148,6 +148,7 @@ function CommentSection() {
   const [username, setUsername] = useState('');
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
+  const [thumbs, setThumbs] = useState({});
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -165,6 +166,15 @@ function CommentSection() {
       setUsername('');
     }
   };
+
+  const handleThumbUpOrDown = (commentIndex, type) => {
+    setThumbs(prev => ({
+      ...prev,
+      [commentIndex]: type
+    }));
+  };
+
+
 
   return (
     <div style={{ width: '100%', marginTop: '20px' }}>
@@ -196,8 +206,8 @@ function CommentSection() {
                 borderColor: '#e2e8f0',
                 borderWidth: '1px',
                 borderStyle: 'solid',
-              }}>
-                <p key={index} style={{
+              }} key={index} >
+                <p style={{
                   padding: '10px',
                   marginTop: '10px',
                   wordWrap: 'break-word',
@@ -208,9 +218,9 @@ function CommentSection() {
                   <strong>{comment.username}: </strong>{comment.text}
                 </p>
                 <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-                  <button onClick={() => { }} style={{
+                  <button onClick={() => handleThumbUpOrDown(index, 'up')} style={{
                     fontSize: '15px',
-                    color: 'black',
+                    color: thumbs[index] === "up" ? 'green' : 'black',
                     backgroundColor: '#ffffff',
                     borderRadius: '10px',
                     boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
@@ -222,9 +232,9 @@ function CommentSection() {
                   }}>
                     <FaThumbsUp />
                   </button>
-                  <button onClick={() => { }} style={{
+                  <button onClick={() => handleThumbUpOrDown(index, 'down')} style={{
                     fontSize: '15px',
-                    color: 'black',
+                    color: thumbs[index] === "down" ? 'red' : 'black',
                     backgroundColor: '#ffffff',
                     borderRadius: '10px',
                     boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
