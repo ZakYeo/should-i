@@ -17,3 +17,8 @@ A web application built in ReactJS designed to pull weather data for the user ba
     - Terraform to control & manage deployment of AWS resources
 - Unit & integration tests
 - Pre-commit hooks to automate running of unit tests & linting files
+
+## App Screenshots
+
+
+![Main App Page / Dashboard](app-screenshots/dashboard-08-07-2024)
