@@ -84,18 +84,15 @@ function App() {
 
           <div style={{
             flex: 1,
-            padding: '0 40px',
+            padding: '20px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-evenly',
             gap: 10,
             backgroundColor: '#ffffff',
             opacity: '0.9',
-            padding: '20px',
             borderRadius: '10px',
             boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-            display: 'flex',
-            flexDirection: 'column',
             width: '100%',
             alignItems: 'center',
             transition: 'all 0.3s ease-in-out'
@@ -117,7 +114,6 @@ function App() {
         <div style={{
           flex: 1,
           textAlign: 'center',
-          padding: '0 40px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
@@ -127,8 +123,6 @@ function App() {
           padding: '20px',
           borderRadius: '10px',
           boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
-          display: 'flex',
-          flexDirection: 'column',
           width: '100%',
           alignItems: 'center',
           transition: 'all 0.3s ease-in-out'
