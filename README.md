@@ -9,6 +9,7 @@ A web application built in ReactJS designed to pull weather data for the user ba
 - Comment system to write & display comments from users
 - Thumbs up or down other users' comments
 - Pre-commit hook using husky with ESLint & Prettier
+- .env environment variables for API keys
 
 ## Planned Features
 
