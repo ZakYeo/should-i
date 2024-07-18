@@ -21,4 +21,4 @@ A web application built in ReactJS designed to pull weather data for the user ba
 ## App Screenshots
 
 
-![Main App Page / Dashboard](app-screenshots/dashboard-08-07-2024)
+![Main App Page / Dashboard](app-screenshots/dashboard-08-07-2024.png)
