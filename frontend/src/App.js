@@ -15,6 +15,7 @@ import "./App.css"
 import { GoogleMap, LoadScript, Marker, Circle } from "@react-google-maps/api"
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa"
 import PropTypes from "prop-types"
+
 const MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
 
 export function App() {
