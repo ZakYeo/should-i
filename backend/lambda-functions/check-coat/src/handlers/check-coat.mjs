@@ -88,7 +88,7 @@ export const handler = async (event) => {
   }
 
   return {
-    statusCode: 500,
+    statusCode: 200,
     headers: {
       "Content-Type": "application/json"
     },
