@@ -3,7 +3,39 @@ import fetch from "node-fetch"
 const WEATHER_API_KEY = process.env.API_KEY
 
 /**
- * A Lambda function that grabs and returns weather data based on lat and lon from query parameters
+ * Lambda to grab and returns weather data based on lat and lon from query parameters
+ * Weather API returns a response body of the format:
+ *
+   {
+    coord: { lon: -0.1257, lat: 51.5085 },
+    weather: [
+      { id: 801, main: 'Clouds', description: 'few clouds', icon: '02d' }
+    ],
+    base: 'stations',
+    main: {
+      temp: 25.98,
+      feels_like: 25.98,
+      temp_min: 24.03,
+      temp_max: 27.17,
+      pressure: 1016,
+      humidity: 54
+    },
+    visibility: 10000,
+    wind: { speed: 3.58, deg: 45, gust: 4.47 },
+    clouds: { all: 20 },
+    dt: 1719249095,
+    sys: {
+      type: 2,
+      id: 2075535,
+      country: 'GB',
+      sunrise: 1719200642,
+      sunset: 1719260510
+    },
+    timezone: 3600,
+    id: 2643743,
+    name: 'London',
+    cod: 200
+  }
  */
 export const handler = async (event) => {
 
@@ -31,41 +63,8 @@ export const handler = async (event) => {
     if (!weatherData || weatherData.cod !== 200) {
       throw new Error("Failed to fetch weather data")
     }
-    /* Example Weather Data Response Object
-     {
-      coord: { lon: -0.1257, lat: 51.5085 },
-      weather: [
-        { id: 801, main: 'Clouds', description: 'few clouds', icon: '02d' }
-      ],
-      base: 'stations',
-      main: {
-        temp: 25.98,
-        feels_like: 25.98,
-        temp_min: 24.03,
-        temp_max: 27.17,
-        pressure: 1016,
-        humidity: 54
-      },
-      visibility: 10000,
-      wind: { speed: 3.58, deg: 45, gust: 4.47 },
-      clouds: { all: 20 },
-      dt: 1719249095,
-      sys: {
-        type: 2,
-        id: 2075535,
-        country: 'GB',
-        sunrise: 1719200642,
-        sunset: 1719260510
-      },
-      timezone: 3600,
-      id: 2643743,
-      name: 'London',
-      cod: 200
-    }
-    */
 
     const shouldWearCoat = weatherData.main.feels_like < 15
-    console.log(weatherData)
 
     resp = {
       location: weatherData.name,
@@ -94,7 +93,7 @@ export const handler = async (event) => {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      success: false,
+      success: true,
       message: "Successfully returned weather data",
       ...resp
     })
