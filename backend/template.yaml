@@ -10,6 +10,10 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Origin,Accept'"
+        AllowOrigin: "'http://localhost:3001'"
       DefinitionBody:
         swagger: "2.0"
         info:
@@ -31,6 +35,7 @@ Resources:
                 passthroughBehavior: "when_no_match"
                 httpMethod: "GET"
                 type: "aws_proxy"
+
 
   CheckCoat:
     Type: AWS::Serverless::Function 
