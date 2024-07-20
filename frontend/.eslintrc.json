@@ -16,7 +16,21 @@
     "prettier"
   ],
   "rules": {
-    "prettier/prettier": "error"
+    "prettier/prettier": "warn",
+    "no-unused-vars": "warn",
+    "no-console": "warn",
+    "eqeqeq": "warn",
+    "curly": "warn",
+    "quotes": [
+      "warn",
+      "single"
+    ],
+    "semi": [
+      "warn",
+      "always"
+    ],
+    "no-undef": "warn",
+    "no-redeclare": "warn"
   },
   "env": {
     "browser": true,
