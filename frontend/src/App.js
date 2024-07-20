@@ -162,7 +162,7 @@ export function App() {
               </p>
             )}
           </div>
-          <CommentSection />
+          {latLon && <CommentSection lat={latLon.latitude} lon={latLon.longitude} setLatLon={setLatLon} />}
         </div>
         <div
           style={{
@@ -184,7 +184,7 @@ export function App() {
         >
           {weatherData && <WeatherCard weatherData={weatherData} />}
           {latLon && (
-            <MapComponent lat={latLon.latitude} lon={latLon.longitude} />
+            <MapComponent key={`${latLon.latitude}-${latLon.longitude}`} lat={latLon.latitude} lon={latLon.longitude} />
           )}
           <ThumbsUpOrDown />
         </div>
@@ -193,11 +193,17 @@ export function App() {
   )
 }
 
-export function CommentSection() {
+export function CommentSection({ lat, lon, setLatLon }) {
   const [username, setUsername] = useState("")
   const [comment, setComment] = useState("")
   const [comments, setComments] = useState([])
   const currentUser = "exampleUsername"
+
+  const cities = {
+    "Your Location": { lat, lon },
+    London: { lat: 51.5074, lon: -0.1278 },
+    Brighton: { lat: 50.8225, lon: -0.1372 },
+  };
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value)
@@ -220,6 +226,10 @@ export function CommentSection() {
       setUsername("")
     }
   }
+  const handleLocationChange = (e) => {
+    const selectedCity = e.target.value;
+    setLatLon({ latitude: cities[selectedCity].lat, longitude: cities[selectedCity].lon });
+  };
 
   const handleThumbUpOrDown = (commentIndex, type) => {
     setComments(
@@ -266,10 +276,12 @@ export function CommentSection() {
           width: "100%",
         }}
       >
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", alignItems: 'center' }}>
           <p
             style={{
               fontStyle: "italic",
+              display: 'flex',
+              flex: 1,
               color: "#4a5568",
               opacity: 0.8,
               visibility: comments.length > 0 ? "visible" : "hidden",
@@ -277,6 +289,15 @@ export function CommentSection() {
           >
             comments in your area:
           </p>
+          <div>
+            <select onChange={handleLocationChange} style={{ padding: "5px 10px", borderRadius: "5px" }}>
+              {Object.keys(cities).map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
         <div
           style={{
@@ -684,6 +705,11 @@ WeatherCard.propTypes = {
 MapComponent.propTypes = {
   lat: PropTypes.number,
   lon: PropTypes.number,
+}
+CommentSection.propTypes = {
+  lat: PropTypes.number,
+  lon: PropTypes.number,
+  setLatLon: PropTypes.func
 }
 
 export default App
