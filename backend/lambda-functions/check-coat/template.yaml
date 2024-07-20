@@ -10,8 +10,8 @@ Resources:
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
-  # This is a Lambda function config associated with the source code: hello-from-lambda.js
-  helloFromLambdaFunction:
+  # This is a Lambda function config associated with the source code: 
+  checkCoat:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/check-coat.handler
@@ -24,6 +24,9 @@ Resources:
       Policies:
         # Give Lambda basic execution Permission to the helloFromLambda
       - AWSLambdaBasicExecutionRole
+      Environment:
+        Variables:
+          API_KEY: !Ref API_KEY
 # # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group

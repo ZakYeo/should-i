@@ -35,8 +35,8 @@ Resources:
   CheckCoat:
     Type: AWS::Serverless::Function 
     Properties:
-      CodeUri: lambda-functions/check-coat/src/handlers
-      Handler: check-coat.handler
+      CodeUri: lambda-functions/check-coat/
+      Handler: src/handlers/check-coat.handler
       Runtime: nodejs18.x
       Events:
         ApiEvent:
@@ -46,6 +46,9 @@ Resources:
             Method: get
             RestApiId:
               Ref: ShouldIAPI 
+      Environment:
+        Variables:
+          API_KEY: !Ref API_KEY
 
 Outputs:
   ApiURL:
