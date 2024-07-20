@@ -15,6 +15,7 @@ import "./App.css"
 import { GoogleMap, LoadScript, Marker, Circle } from "@react-google-maps/api"
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa"
 import PropTypes from "prop-types"
+import { setSelectionRange } from "@testing-library/user-event/dist/utils"
 
 const MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
 
@@ -23,6 +24,12 @@ export function App() {
   const [latLon, setLatLon] = useState(null)
   const [loading, setLoading] = useState(true)
   const [weatherData, setWeatherData] = useState(null)
+  const [customLocation, setCustomLocation] = useState(null);
+  const updateLocation = (newLocation) => {
+    console.log("Updating location:", newLocation);
+    setLatLon(newLocation);
+    setCustomLocation({ ...newLocation });
+  };
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -162,7 +169,10 @@ export function App() {
               </p>
             )}
           </div>
-          {latLon && <CommentSection lat={latLon.latitude} lon={latLon.longitude} setLatLon={setLatLon} />}
+          {latLon && <CommentSection
+            lat={latLon.latitude} lon={latLon.longitude} setLatLon={setLatLon}
+            customLocation={customLocation}
+          />}
         </div>
         <div
           style={{
@@ -184,7 +194,11 @@ export function App() {
         >
           {weatherData && <WeatherCard weatherData={weatherData} />}
           {latLon && (
-            <MapComponent key={`${latLon.latitude}-${latLon.longitude}`} lat={latLon.latitude} lon={latLon.longitude} />
+            <MapComponent
+              key={`${latLon.latitude}-${latLon.longitude}`}
+              lat={latLon.latitude} lon={latLon.longitude} setLatLon={setLatLon}
+              updateLocation={updateLocation}
+            />
           )}
           <ThumbsUpOrDown />
         </div>
@@ -193,16 +207,35 @@ export function App() {
   )
 }
 
-export function CommentSection({ lat, lon, setLatLon }) {
+export function CommentSection({ lat, lon, setLatLon, customLocation }) {
   const [username, setUsername] = useState("")
   const [comment, setComment] = useState("")
   const [comments, setComments] = useState([])
   const currentUser = "exampleUsername"
+  const [selectedLocation, setSelectedLocation] = useState("");
+
+  useEffect(() => {
+    console.log("Custom location changed:", customLocation); // Debugging output
+    if (customLocation) {
+      setSelectedLocation("Custom Location");
+    }
+  }, [customLocation?.latitude, customLocation?.longitude]);
 
   const cities = {
     "Your Location": { lat, lon },
+    "Custom Location": { lat, lon },
     London: { lat: 51.5074, lon: -0.1278 },
     Brighton: { lat: 50.8225, lon: -0.1372 },
+  };
+
+  const handleLocationChange = (e) => {
+    setSelectedLocation(e.target.value);
+    if (e.target.value === "Custom Location") {
+      setLatLon(customLocation);
+    } else {
+      const cityCoords = cities[e.target.value];
+      setLatLon({ latitude: cityCoords.lat, longitude: cityCoords.lon });
+    }
   };
 
   const handleUsernameChange = (e) => {
@@ -226,10 +259,6 @@ export function CommentSection({ lat, lon, setLatLon }) {
       setUsername("")
     }
   }
-  const handleLocationChange = (e) => {
-    const selectedCity = e.target.value;
-    setLatLon({ latitude: cities[selectedCity].lat, longitude: cities[selectedCity].lon });
-  };
 
   const handleThumbUpOrDown = (commentIndex, type) => {
     setComments(
@@ -290,7 +319,9 @@ export function CommentSection({ lat, lon, setLatLon }) {
             comments in your area:
           </p>
           <div>
-            <select onChange={handleLocationChange} style={{ padding: "5px 10px", borderRadius: "5px" }}>
+            <select
+              value={selectedLocation}
+              onChange={handleLocationChange} style={{ padding: "5px 10px", borderRadius: "5px" }}>
               {Object.keys(cities).map((city) => (
                 <option key={city} value={city}>
                   {city}
@@ -646,11 +677,11 @@ export function WeatherCard({
   )
 }
 
-export function MapComponent({ lat, lon }) {
+function MapComponent({ lat, lon, updateLocation }) {
   const containerStyle = {
     width: "100%",
     height: "100%",
-  }
+  };
 
   const circleOptions = {
     strokeColor: "black",
@@ -660,7 +691,16 @@ export function MapComponent({ lat, lon }) {
     fillOpacity: 0.2,
     center: { lat, lng: lon },
     radius: 2000,
-  }
+  };
+
+  const handleMapDoubleClick = (event) => {
+    const newLat = event.latLng.lat();
+    const newLng = event.latLng.lng();
+    updateLocation({
+      latitude: newLat,
+      longitude: newLng
+    });
+  };
 
   return (
     <LoadScript
@@ -676,15 +716,16 @@ export function MapComponent({ lat, lon }) {
       >
         <GoogleMap
           mapContainerStyle={containerStyle}
-          center={{ lat: lat, lng: lon }}
+          center={{ lat, lng: lon }}
           zoom={13}
+          onDblClick={handleMapDoubleClick}
         >
-          <Marker position={{ lat: lat, lng: lon }} />
-          <Circle center={{ lat: lat, lng: lon }} options={circleOptions} />
+          <Marker position={{ lat, lng: lon }} />
+          <Circle center={{ lat, lng: lon }} options={circleOptions} />
         </GoogleMap>
       </div>
     </LoadScript>
-  )
+  );
 }
 
 WeatherCard.propTypes = {
@@ -705,11 +746,16 @@ WeatherCard.propTypes = {
 MapComponent.propTypes = {
   lat: PropTypes.number,
   lon: PropTypes.number,
+  updateLocation: PropTypes.func
 }
 CommentSection.propTypes = {
   lat: PropTypes.number,
   lon: PropTypes.number,
-  setLatLon: PropTypes.func
+  setLatLon: PropTypes.func,
+  customLocation: PropTypes.shape({
+    latitude: PropTypes.number,
+    longitude: PropTypes.number
+  })
 }
 
 export default App
