@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+  ShouldIAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          title: "Should-I-API"
+        paths:
+          /check-coat:
+            get:
+              produces:
+                - application/json
+              responses:
+                200:
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations
+                responses:
+                  default:
+                    statusCode: "200"
+                passthroughBehavior: "when_no_match"
+                httpMethod: "GET"
+                type: "aws_proxy"
+
+  CheckCoat:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: lambda-functions/check-coat/src/handlers
+      Handler: check-coat.handler
+      Runtime: nodejs18.x
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /check-coat
+            Method: get
+            RestApiId:
+              Ref: ShouldIAPI 
+
+Outputs:
+  ApiURL:
+    Description: "API endpoint URL for Prod stage"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
