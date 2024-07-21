@@ -298,6 +298,8 @@ export function CommentSection({
         text: comment,
         upVotes: [],
         downVotes: [],
+        lat: lat,
+        lon: lon
       }
       setComments([...comments, newComment])
       setComment("")
