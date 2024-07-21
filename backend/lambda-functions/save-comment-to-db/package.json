@@ -20,5 +20,11 @@
             "mjs",
             "js"
         ]
+    },
+    "dependencies": {
+        "@aws-sdk/client-dynamodb": "^3.616.0",
+        "@aws-sdk/lib-dynamodb": "^3.616.0",
+        "geohash": "^0.0.1",
+        "ngeohash": "^0.6.3"
     }
 }

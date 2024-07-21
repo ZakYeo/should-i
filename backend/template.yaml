@@ -35,6 +35,22 @@ Resources:
                 passthroughBehavior: "when_no_match"
                 httpMethod: "GET"
                 type: "aws_proxy"
+        /comment/save:
+          get:
+            produces:
+              - application/json
+            responses:
+              200:
+                description: "200 response"
+            x-amazon-apigateway-integration:
+              uri:
+                Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations
+              responses:
+                default:
+                  statusCode: "200"
+              passthroughBehavior: "when_no_match"
+              httpMethod: "POST"
+              type: "aws_proxy"
 
   CommentsTable:
       Type: AWS::DynamoDB::Table
@@ -86,8 +102,8 @@ Resources:
         ApiEvent:
           Type: Api
           Properties:
-            Path: /save-comment-to-db
-            Method: get
+            Path: /comment/save
+            Method: post 
             RestApiId:
               Ref: ShouldIAPI 
 
