@@ -16,7 +16,9 @@ const precision = 6;
 
 
 export async function handler(event) {
-  const { userName, commentDescription, thumbsUpAmount, thumbsDownAmount, latitude, longitude } = event;
+  const { userName, commentDescription, thumbsUpAmount, thumbsDownAmount, latitude, longitude } = event.body;
+  console.log(JSON.stringify(event))
+  console.log(`Saving comment to DB using parameters: `, userName, commentDescription, thumbsUpAmount, thumbsDownAmount, latitude, longitude)
 
   const commentId = Date.now().toString();
 

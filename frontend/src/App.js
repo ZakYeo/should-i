@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { checkCoat, sendFeedback } from "./api"
+import { checkCoat, saveCommentToDB } from "./api"
 import {
   WiDaySunny,
   WiHumidity,
@@ -291,7 +291,7 @@ export function CommentSection({
     setComment(e.target.value)
   }
 
-  const handleCommentSubmit = () => {
+  const handleCommentSubmit = async () => {
     if (username.trim() !== "" && comment.trim() !== "") {
       const newComment = {
         username: username,
@@ -301,6 +301,7 @@ export function CommentSection({
         lat: lat,
         lon: lon
       }
+      saveCommentToDB(username, comment, 0, 0, lat, lon)
       setComments([...comments, newComment])
       setComment("")
       setUsername("")

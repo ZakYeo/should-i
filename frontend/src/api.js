@@ -17,3 +17,27 @@ export const checkCoat = async (latitude, longitude) => {
   }
 }
 
+export const saveCommentToDB = async (userName, commentDescription, thumbsUpAmount, thumbsDownAmount, latitude, longitude) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}comment/save`,
+      {
+        userName,
+        commentDescription,
+        thumbsUpAmount,
+        thumbsDownAmount,
+        latitude,
+        longitude
+      },
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error saving comment to DB", error);
+    throw error;
+  }
+}
