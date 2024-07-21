@@ -36,6 +36,28 @@ Resources:
                 httpMethod: "GET"
                 type: "aws_proxy"
 
+  CommentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Comments
+        BillingMode: PAY_PER_REQUEST 
+        AttributeDefinitions:
+          - AttributeName: "CommentId"
+            AttributeType: "S"  
+          - AttributeName: "Geohash"
+            AttributeType: "S" 
+        KeySchema:
+          - AttributeName: "CommentId"
+            KeyType: "HASH" 
+        GlobalSecondaryIndexes:
+          - IndexName: "GeohashIndex"
+            KeySchema:
+              - AttributeName: "Geohash"
+                KeyType: "HASH"
+            Projection:
+              ProjectionType: "ALL" 
+        SSESpecification:
+          SSEEnabled: true 
 
   CheckCoat:
     Type: AWS::Serverless::Function 
@@ -54,6 +76,20 @@ Resources:
       Environment:
         Variables:
           API_KEY: !Ref API_KEY
+  SaveCommentToDB:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: lambda-functions/save-comment-to-db/
+      Handler: src/handlers/save-comment-to-db.handler
+      Runtime: nodejs18.x
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /save-comment-to-db
+            Method: get
+            RestApiId:
+              Ref: ShouldIAPI 
 
 Outputs:
   ApiURL:
