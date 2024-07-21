@@ -190,6 +190,7 @@ export function App() {
               setLatLon={setLatLon}
               customLocation={customLocation}
               setCustomLocation={setCustomLocation}
+              loading={loading}
             />
           )}
         </div>
@@ -234,6 +235,7 @@ export function CommentSection({
   setLatLon,
   customLocation,
   setCustomLocation,
+  loading
 }) {
   const [username, setUsername] = useState("")
   const [comment, setComment] = useState("")
@@ -355,7 +357,7 @@ export function CommentSection({
               flex: 1,
               color: "#4a5568",
               opacity: 0.8,
-              visibility: comments.length > 0 ? "visible" : "hidden",
+              visibility: !loading && comments.length > 0 ? "visible" : "hidden",
             }}
           >
             comments in your area:
@@ -364,18 +366,22 @@ export function CommentSection({
             <select
               value={selectedLocation}
               onChange={handleLocationChange}
-              style={{ padding: "5px 10px", borderRadius: "5px" }}
+              style={{
+                padding: "5px 10px",
+                borderRadius: "5px",
+                visibility: !loading ? "visible" : "hidden",
+              }}
             >
               {Object.keys(cities).map((city) => {
                 // Check if the city is "Custom Location" and only render it if customLocation is set
                 if (city === "Custom Location" && !customLocation) {
-                  return null
+                  return null;
                 }
                 return (
                   <option key={city} value={city}>
                     {city}
                   </option>
-                )
+                );
               })}
             </select>
           </div>
@@ -391,7 +397,11 @@ export function CommentSection({
             justifyContent: comments.length > 0 ? "start" : "center",
           }}
         >
-          {comments.length > 0 ? (
+          {loading ? (
+            <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '200px', justifyContent: 'center' }}>
+              <Spinner />
+            </div>
+          ) : comments.length > 0 ? (
             comments.map((comment, index) => (
               <div
                 style={{
@@ -425,9 +435,6 @@ export function CommentSection({
                       style={{
                         fontSize: "15px",
                         color: 'black',
-                        /*color: comment.ThumbsUp.includes(currentUser)
-                          ? "green"
-                          : "black",*/
                         backgroundColor: "#ffffff",
                         borderRadius: "10px",
                         boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
@@ -456,9 +463,6 @@ export function CommentSection({
                       style={{
                         fontSize: "15px",
                         color: "black",
-                        /*color: comment.downVotes.includes(currentUser)
-                          ? "red"
-                          : "black",*/
                         backgroundColor: "#ffffff",
                         borderRadius: "10px",
                         boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
@@ -812,6 +816,7 @@ CommentSection.propTypes = {
     longitude: PropTypes.number,
   }),
   setCustomLocation: PropTypes.func,
+  loading: PropTypes.bool
 }
 
 export default App
