@@ -51,6 +51,22 @@ Resources:
               passthroughBehavior: "when_no_match"
               httpMethod: "POST"
               type: "aws_proxy"
+        /comment/get/nearby:
+          get:
+            produces:
+              - application/json
+            responses:
+              200:
+                description: "200 response"
+            x-amazon-apigateway-integration:
+              uri:
+                Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations
+              responses:
+                default:
+                  statusCode: "200"
+              passthroughBehavior: "when_no_match"
+              httpMethod: "GET"
+              type: "aws_proxy"
 
   CommentsTable:
       Type: AWS::DynamoDB::Table
@@ -104,6 +120,20 @@ Resources:
           Properties:
             Path: /comment/save
             Method: post 
+            RestApiId:
+              Ref: ShouldIAPI 
+  GetNearbyComments:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: lambda-functions/get-nearby-comments/
+      Handler: src/handlers/get-nearby-comments.handler
+      Runtime: nodejs18.x
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /comment/get/nearby
+            Method: get 
             RestApiId:
               Ref: ShouldIAPI 
 
