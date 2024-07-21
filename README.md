@@ -8,6 +8,7 @@ A web application built in ReactJS designed to pull weather data for the user ba
 - Comment system to write & display comments from users
 - Thumbs up or down other users' comments
 - View nearby comments submitted by other users based on location
+- Loading animations for components while fetching weather data
 
 ## Codebase Features
 
@@ -28,17 +29,25 @@ A web application built in ReactJS designed to pull weather data for the user ba
     - Lambda error handling including:
         - Missing body 
         - Incorrect body
+        - Curseword detection + filter
+    - API Gateway rate limiting
     - Terraform to control & manage deployment of AWS resources
     - Add or remove to thumbs up / thumbs down ratings in DynamoDB
-- Loading animation for comments section & weather on page load and when changing location
 - Unit & integration tests
 - Pre-commit hook to run integration & unit tests
+- New updated UI
+- Set loading animations when changing location via drop down component 
+- Move 'Is this information accurate' feedback option into 'Should you wear a coat' component
+- Background footage changing based on weather data
+- Mobile support / support for different screen sizes
+- Watchman for hot reloading/deployment of local aws services
 
 
 ## How to run the app?
 
 - Run `./deploy-local-aws.sh` in `backend/` to deploy AWS backend
 - Run `npm start` in `frontend/` to deploy ReactJS web app frontend
+- Startup local dynamoDB server by running `./deploy-local-dynamodb.sh && ./deploy-local-dynamodb-tables` (assuming you have a local instance of dynamoDB downloaded in that directory in a folder named dynamodb_local_latest)
 
 ## App Screenshots
 
