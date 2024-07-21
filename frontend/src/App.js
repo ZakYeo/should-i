@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { checkCoat, saveCommentToDB } from "./api"
+import { checkCoat, getNearbyComments, saveCommentToDB } from "./api"
 import {
   WiDaySunny,
   WiHumidity,
@@ -26,23 +26,23 @@ export function App() {
   const [weatherData, setWeatherData] = useState(null)
   const [customLocation, setCustomLocation] = useState(null)
 
-  const updateLocation = async (newLocation, isCustom = false) => {
-    console.log("Updating location:", newLocation)
-    setLatLon(newLocation)
+  const updateLocation = React.useCallback(async (newLocation, isCustom = false) => {
+    console.log("Updating location:", newLocation);
+    setLatLon(newLocation);
     if (isCustom) {
-      setCustomLocation({ ...newLocation })
+      setCustomLocation({ ...newLocation });
     }
     try {
-      setLoading(true)
-      const data = await checkCoat(newLocation.latitude, newLocation.longitude)
-      setWeatherData(data)
-      setShouldWearCoat(data.shouldWearCoat)
-      setLoading(false)
+      setLoading(true);
+      const data = await checkCoat(newLocation.latitude, newLocation.longitude);
+      setWeatherData(data);
+      setShouldWearCoat(data.shouldWearCoat);
+      setLoading(false);
     } catch (error) {
-      console.error("Error fetching weather data", error)
-      setLoading(false)
+      console.error("Error fetching weather data", error);
+      setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -63,7 +63,7 @@ export function App() {
     }
   }, [])
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (latLon) {
       const fetchData = async () => {
         try {
@@ -77,7 +77,7 @@ export function App() {
       }
       fetchData()
     }
-  }, [latLon])
+  }, [latLon])*/
   return (
     <div
       style={{
