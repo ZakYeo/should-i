@@ -212,7 +212,7 @@ export function App() {
             transition: "all 0.3s ease-in-out",
           }}
         >
-          {weatherData && <WeatherCard weatherData={weatherData} />}
+          <WeatherCard weatherData={weatherData} loading={loading} />
           {latLon && (
             <MapComponent
               key={`${latLon.latitude}-${latLon.longitude}`}
@@ -660,7 +660,8 @@ export function Spinner() {
 }
 
 export function WeatherCard({
-  weatherData: { main, temp, wind, humidity, feels_like, description },
+  weatherData,
+  loading
 }) {
   const weatherIcon = {
     Clouds: <WiDayCloudy className="text-gray-500 text-5xl" />,
@@ -672,65 +673,73 @@ export function WeatherCard({
     Mist: <WiFog className="text-gray-400 text-5xl" />,
   }
 
+
+  const { main, temp, wind, humidity, feels_like, description } = weatherData ? weatherData : {};
+
   return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center" }}>
-          {weatherIcon[main] || (
-            <WiDaySunny className="text-yellow-500 text-5xl" />
-          )}
-          <div style={{ marginLeft: "16px" }}>
-            <h2
-              style={{ fontSize: "36px", fontWeight: "bold", color: "#2b6cb0" }}
-            >
-              {main}
-            </h2>
-            <p style={{ fontSize: "20px", color: "#4a5568" }}>
-              Feels like: {feels_like}°C
-            </p>
-            <p style={{ fontSize: "18px", color: "#4a5568" }}>{temp}°C</p>
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "40%", // Adjust this as needed
+      width: "100%",
+    }}>
+      {loading ? (
+        <div>
+          <Spinner style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
+        </div>
+      ) : (
+        <>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+          }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {weatherIcon[main] || <WiDaySunny className="text-yellow-500 text-5xl" />}
+              <div style={{ marginLeft: "16px" }}>
+                <h2 style={{ fontSize: "36px", fontWeight: "bold", color: "#2b6cb0" }}>
+                  {main}
+                </h2>
+                <p style={{ fontSize: "20px", color: "#4a5568" }}>
+                  Feels like: {feels_like}°C
+                </p>
+                <p style={{ fontSize: "18px", color: "#4a5568" }}>{temp}°C</p>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "16px",
-          color: "#4a5568",
-          fontSize: "18px",
-          marginTop: "16px",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <WiHumidity className="text-blue-500 text-4xl mr-2" />
-          <span>Humidity: {humidity}%</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <WiStrongWind className="text-green-500 text-4xl mr-2" />
-          <span>Wind: {wind.speed} m/h</span>
-        </div>
-      </div>
-      <div
-        style={{
-          fontStyle: "italic",
-          textAlign: "center",
-          color: "#718096",
-          fontSize: "18px",
-          marginTop: "8px",
-        }}
-      >
-        &quot;{description}&quot;
-      </div>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "16px",
+            color: "#4a5568",
+            fontSize: "18px",
+            marginTop: "16px",
+          }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <WiHumidity className="text-blue-500 text-4xl mr-2" />
+              <span>Humidity: {humidity}%</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <WiStrongWind className="text-green-500 text-4xl mr-2" />
+              <span>Wind: {wind.speed} m/h</span>
+            </div>
+          </div>
+          <div style={{
+            fontStyle: "italic",
+            textAlign: "center",
+            color: "#718096",
+            fontSize: "18px",
+            marginTop: "8px",
+          }}>
+            &quot;{description}&quot;
+          </div>
+        </>
+      )}
     </div>
-  )
+  );
 }
 
 function MapComponent({ lat, lon, updateLocation }) {
@@ -800,6 +809,7 @@ WeatherCard.propTypes = {
   }),
   lat: PropTypes.number,
   lon: PropTypes.number,
+  loading: PropTypes.bool
 }
 
 MapComponent.propTypes = {
