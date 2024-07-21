@@ -41,3 +41,23 @@ export const saveCommentToDB = async (userName, commentDescription, thumbsUpAmou
     throw error;
   }
 }
+
+export const getNearbyComments = async (latitude, longitude) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}comment/get/nearby`, {
+      params: {
+        lat: latitude,
+        lon: longitude
+      }
+    });
+    console.log(response);
+    console.log()
+    console.log()
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching nearby comments:', error);
+    throw error;
+  }
+}
