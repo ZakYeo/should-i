@@ -17,11 +17,15 @@ A web application built in ReactJS designed to pull weather data for the user ba
 - Local AWS setup including:
     - API Gateway
     - lambdas
+    - DynamoDB to store comments
 
 ## Planned Features
 
 - AWS backend:
-    - DynamoDB to store & maintain users' comments & ratings
+    - DynamoDB to retrieve nearby comments based on location 
+    - Lambda error handling including:
+        - Missing body 
+        - Incorrect body
     - Terraform to control & manage deployment of AWS resources
 - Unit & integration tests
 - Pre-commit hook to run integration & unit tests
