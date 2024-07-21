@@ -255,6 +255,13 @@ export function CommentSection({
     Brighton: { lat: 50.8225, lon: -0.1372 },
   }
 
+  useEffect(() => {
+    (async () => {
+      const comments = await getNearbyComments(lat, lon)
+      setComments(comments)
+    })()
+  }, [lat, lon]);
+
   const handleLocationChange = (e) => {
     setSelectedLocation(e.target.value)
 
@@ -294,12 +301,12 @@ export function CommentSection({
   const handleCommentSubmit = async () => {
     if (username.trim() !== "" && comment.trim() !== "") {
       const newComment = {
-        username: username,
-        text: comment,
-        upVotes: [],
-        downVotes: [],
-        lat: lat,
-        lon: lon
+        UserName: username,
+        Description: comment,
+        ThumbsUp: 0,
+        ThumbsDown: 0,
+        Latitude: lat,
+        Longitude: lon
       }
       saveCommentToDB(username, comment, 0, 0, lat, lon)
       setComments([...comments, newComment])
@@ -312,29 +319,16 @@ export function CommentSection({
     setComments(
       comments.map((comment, index) => {
         if (index === commentIndex) {
-          let newUpVotes = comment.upVotes.slice()
-          let newDownVotes = comment.downVotes.slice()
-
           if (type === "up") {
-            if (newUpVotes.includes(currentUser)) {
-              newUpVotes = newUpVotes.filter((user) => user !== currentUser)
-            } else {
-              newUpVotes.push(currentUser)
-              newDownVotes = newDownVotes.filter((user) => user !== currentUser)
+            return {
+              ...comment,
+              ThumbsUp: comments[index].ThumbsUp += 1,
             }
           } else if (type === "down") {
-            if (newDownVotes.includes(currentUser)) {
-              newDownVotes = newDownVotes.filter((user) => user !== currentUser)
-            } else {
-              newDownVotes.push(currentUser)
-              newUpVotes = newUpVotes.filter((user) => user !== currentUser)
+            return {
+              ...comment,
+              ThumbsDown: comments[index].ThumbsDown += 1
             }
-          }
-
-          return {
-            ...comment,
-            upVotes: newUpVotes,
-            downVotes: newDownVotes,
           }
         }
         return comment
@@ -421,8 +415,8 @@ export function CommentSection({
                     width: "100%",
                   }}
                 >
-                  <strong>{comment.username}: </strong>
-                  {comment.text}
+                  <strong>{comment.UserName}: </strong>
+                  {comment.Description}
                 </p>
                 <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
                   <div>
@@ -430,9 +424,10 @@ export function CommentSection({
                       onClick={() => handleThumbUpOrDown(index, "up")}
                       style={{
                         fontSize: "15px",
-                        color: comment.upVotes.includes(currentUser)
+                        color: 'black',
+                        /*color: comment.ThumbsUp.includes(currentUser)
                           ? "green"
-                          : "black",
+                          : "black",*/
                         backgroundColor: "#ffffff",
                         borderRadius: "10px",
                         boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
@@ -452,7 +447,7 @@ export function CommentSection({
                         fontWeight: 900,
                       }}
                     >
-                      {comment.upVotes.length}
+                      {comment.ThumbsUp}
                     </div>
                   </div>
                   <div>
@@ -460,9 +455,10 @@ export function CommentSection({
                       onClick={() => handleThumbUpOrDown(index, "down")}
                       style={{
                         fontSize: "15px",
-                        color: comment.downVotes.includes(currentUser)
+                        color: "black",
+                        /*color: comment.downVotes.includes(currentUser)
                           ? "red"
-                          : "black",
+                          : "black",*/
                         backgroundColor: "#ffffff",
                         borderRadius: "10px",
                         boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
@@ -482,7 +478,7 @@ export function CommentSection({
                         fontWeight: 900,
                       }}
                     >
-                      {comment.downVotes.length}
+                      {comment.ThumbsDown}
                     </div>
                   </div>
                 </div>
