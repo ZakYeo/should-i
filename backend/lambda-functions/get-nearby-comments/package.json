@@ -20,5 +20,8 @@
             "mjs",
             "js"
         ]
+    },
+    "dependencies": {
+        "ngeohash": "^0.6.3"
     }
 }
