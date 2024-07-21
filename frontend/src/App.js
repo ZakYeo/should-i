@@ -24,26 +24,25 @@ export function App() {
   const [latLon, setLatLon] = useState(null)
   const [loading, setLoading] = useState(true)
   const [weatherData, setWeatherData] = useState(null)
-  const [customLocation, setCustomLocation] = useState(null);
-
+  const [customLocation, setCustomLocation] = useState(null)
 
   const updateLocation = async (newLocation, isCustom = false) => {
-    console.log("Updating location:", newLocation);
-    setLatLon(newLocation);
+    console.log("Updating location:", newLocation)
+    setLatLon(newLocation)
     if (isCustom) {
-      setCustomLocation({ ...newLocation });
+      setCustomLocation({ ...newLocation })
     }
     try {
-      setLoading(true);
-      const data = await checkCoat(newLocation.latitude, newLocation.longitude);
-      setWeatherData(data);
-      setShouldWearCoat(data.shouldWearCoat);
-      setLoading(false);
+      setLoading(true)
+      const data = await checkCoat(newLocation.latitude, newLocation.longitude)
+      setWeatherData(data)
+      setShouldWearCoat(data.shouldWearCoat)
+      setLoading(false)
     } catch (error) {
-      console.error("Error fetching weather data", error);
-      setLoading(false);
+      console.error("Error fetching weather data", error)
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -52,17 +51,17 @@ export function App() {
           const initialLocation = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          };
-          updateLocation(initialLocation);
+          }
+          updateLocation(initialLocation)
         },
         (error) => {
-          console.error("Error obtaining location:", error);
+          console.error("Error obtaining location:", error)
         },
-      );
+      )
     } else {
-      console.log("Geolocation is not supported by this browser.");
+      console.log("Geolocation is not supported by this browser.")
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (latLon) {
@@ -184,10 +183,15 @@ export function App() {
               </p>
             )}
           </div>
-          {latLon && <CommentSection
-            lat={latLon.latitude} lon={latLon.longitude} setLatLon={setLatLon}
-            customLocation={customLocation} setCustomLocation={setCustomLocation}
-          />}
+          {latLon && (
+            <CommentSection
+              lat={latLon.latitude}
+              lon={latLon.longitude}
+              setLatLon={setLatLon}
+              customLocation={customLocation}
+              setCustomLocation={setCustomLocation}
+            />
+          )}
         </div>
         <div
           style={{
@@ -211,7 +215,9 @@ export function App() {
           {latLon && (
             <MapComponent
               key={`${latLon.latitude}-${latLon.longitude}`}
-              lat={latLon.latitude} lon={latLon.longitude} setLatLon={setLatLon}
+              lat={latLon.latitude}
+              lon={latLon.longitude}
+              setLatLon={setLatLon}
               updateLocation={updateLocation}
             />
           )}
@@ -222,35 +228,39 @@ export function App() {
   )
 }
 
-export function CommentSection({ lat, lon, setLatLon, customLocation, setCustomLocation }) {
+export function CommentSection({
+  lat,
+  lon,
+  setLatLon,
+  customLocation,
+  setCustomLocation,
+}) {
   const [username, setUsername] = useState("")
   const [comment, setComment] = useState("")
   const [comments, setComments] = useState([])
   const currentUser = "exampleUsername"
-  const [selectedLocation, setSelectedLocation] = useState("Your Location");
-
+  const [selectedLocation, setSelectedLocation] = useState("Your Location")
 
   useEffect(() => {
     if (customLocation) {
-      console.log("Custom location changed:", customLocation);
-      setSelectedLocation("Custom Location");
+      console.log("Custom location changed:", customLocation)
+      setSelectedLocation("Custom Location")
     }
   }, [lat, lon, setLatLon, customLocation?.latitude, customLocation?.longitude])
-
 
   const cities = {
     "Your Location": { lat, lon },
     "Custom Location": customLocation || { lat, lon },
     London: { lat: 51.5074, lon: -0.1278 },
     Brighton: { lat: 50.8225, lon: -0.1372 },
-  };
+  }
 
   const handleLocationChange = (e) => {
-    setSelectedLocation(e.target.value);
+    setSelectedLocation(e.target.value)
 
     if (e.target.value === "Custom Location") {
-      setLatLon(customLocation);
-      setCustomLocation(customLocation);
+      setLatLon(customLocation)
+      setCustomLocation(customLocation)
     } else if (e.target.value === "Your Location") {
       // If "Your Location" is selected, use the initial geolocation
       navigator.geolocation.getCurrentPosition(
@@ -258,20 +268,20 @@ export function CommentSection({ lat, lon, setLatLon, customLocation, setCustomL
           const yourLocation = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          };
-          setLatLon(yourLocation);
-          setCustomLocation(null);
+          }
+          setLatLon(yourLocation)
+          setCustomLocation(null)
         },
         (error) => {
-          console.error("Error obtaining location:", error);
-        }
-      );
+          console.error("Error obtaining location:", error)
+        },
+      )
     } else {
-      const cityCoords = cities[e.target.value];
-      setLatLon({ latitude: cityCoords.lat, longitude: cityCoords.lon });
-      setCustomLocation(null);
+      const cityCoords = cities[e.target.value]
+      setLatLon({ latitude: cityCoords.lat, longitude: cityCoords.lon })
+      setCustomLocation(null)
     }
-  };
+  }
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value)
@@ -340,11 +350,11 @@ export function CommentSection({ lat, lon, setLatLon, customLocation, setCustomL
           width: "100%",
         }}
       >
-        <div style={{ display: "flex", alignItems: 'center' }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <p
             style={{
               fontStyle: "italic",
-              display: 'flex',
+              display: "flex",
               flex: 1,
               color: "#4a5568",
               opacity: 0.8,
@@ -356,17 +366,19 @@ export function CommentSection({ lat, lon, setLatLon, customLocation, setCustomL
           <div>
             <select
               value={selectedLocation}
-              onChange={handleLocationChange} style={{ padding: "5px 10px", borderRadius: "5px" }}>
+              onChange={handleLocationChange}
+              style={{ padding: "5px 10px", borderRadius: "5px" }}
+            >
               {Object.keys(cities).map((city) => {
                 // Check if the city is "Custom Location" and only render it if customLocation is set
                 if (city === "Custom Location" && !customLocation) {
-                  return null;
+                  return null
                 }
                 return (
                   <option key={city} value={city}>
                     {city}
                   </option>
-                );
+                )
               })}
             </select>
           </div>
@@ -722,7 +734,7 @@ function MapComponent({ lat, lon, updateLocation }) {
   const containerStyle = {
     width: "100%",
     height: "100%",
-  };
+  }
 
   const circleOptions = {
     strokeColor: "black",
@@ -732,16 +744,19 @@ function MapComponent({ lat, lon, updateLocation }) {
     fillOpacity: 0.2,
     center: { lat, lng: lon },
     radius: 2000,
-  };
+  }
 
   const handleMapDoubleClick = async (event) => {
-    const newLat = event.latLng.lat();
-    const newLng = event.latLng.lng();
-    await updateLocation({
-      latitude: newLat,
-      longitude: newLng
-    }, true);
-  };
+    const newLat = event.latLng.lat()
+    const newLng = event.latLng.lng()
+    await updateLocation(
+      {
+        latitude: newLat,
+        longitude: newLng,
+      },
+      true,
+    )
+  }
 
   return (
     <LoadScript
@@ -766,7 +781,7 @@ function MapComponent({ lat, lon, updateLocation }) {
         </GoogleMap>
       </div>
     </LoadScript>
-  );
+  )
 }
 
 WeatherCard.propTypes = {
@@ -787,7 +802,7 @@ WeatherCard.propTypes = {
 MapComponent.propTypes = {
   lat: PropTypes.number,
   lon: PropTypes.number,
-  updateLocation: PropTypes.func
+  updateLocation: PropTypes.func,
 }
 CommentSection.propTypes = {
   lat: PropTypes.number,
@@ -795,9 +810,9 @@ CommentSection.propTypes = {
   setLatLon: PropTypes.func,
   customLocation: PropTypes.shape({
     latitude: PropTypes.number,
-    longitude: PropTypes.number
+    longitude: PropTypes.number,
   }),
-  setCustomLocation: PropTypes.func
+  setCustomLocation: PropTypes.func,
 }
 
 export default App
