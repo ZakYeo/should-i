@@ -25,23 +25,29 @@ export function App() {
   const [weatherData, setWeatherData] = useState(null)
   const [customLocation, setCustomLocation] = useState(null)
 
-  const updateLocation = React.useCallback(async (newLocation, isCustom = false) => {
-    console.log("Updating location:", newLocation);
-    setLatLon(newLocation);
-    if (isCustom) {
-      setCustomLocation({ ...newLocation });
-    }
-    try {
-      setLoading(true);
-      const data = await checkCoat(newLocation.latitude, newLocation.longitude);
-      setWeatherData(data);
-      setShouldWearCoat(data.shouldWearCoat);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching weather data", error);
-      setLoading(false);
-    }
-  }, []);
+  const updateLocation = React.useCallback(
+    async (newLocation, isCustom = false) => {
+      console.log("Updating location:", newLocation)
+      setLatLon(newLocation)
+      if (isCustom) {
+        setCustomLocation({ ...newLocation })
+      }
+      try {
+        setLoading(true)
+        const data = await checkCoat(
+          newLocation.latitude,
+          newLocation.longitude,
+        )
+        setWeatherData(data)
+        setShouldWearCoat(data.shouldWearCoat)
+        setLoading(false)
+      } catch (error) {
+        console.error("Error fetching weather data", error)
+        setLoading(false)
+      }
+    },
+    [],
+  )
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -234,7 +240,7 @@ export function CommentSection({
   setLatLon,
   customLocation,
   setCustomLocation,
-  loading
+  loading,
 }) {
   const [username, setUsername] = useState("")
   const [comment, setComment] = useState("")
@@ -257,11 +263,11 @@ export function CommentSection({
   }
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       const comments = await getNearbyComments(lat, lon)
       setComments(comments)
     })()
-  }, [lat, lon]);
+  }, [lat, lon])
 
   const handleLocationChange = (e) => {
     setSelectedLocation(e.target.value)
@@ -307,7 +313,7 @@ export function CommentSection({
         ThumbsUp: 0,
         ThumbsDown: 0,
         Latitude: lat,
-        Longitude: lon
+        Longitude: lon,
       }
       saveCommentToDB(username, comment, 0, 0, lat, lon)
       setComments([...comments, newComment])
@@ -323,12 +329,12 @@ export function CommentSection({
           if (type === "up") {
             return {
               ...comment,
-              ThumbsUp: comments[index].ThumbsUp += 1,
+              ThumbsUp: (comments[index].ThumbsUp += 1),
             }
           } else if (type === "down") {
             return {
               ...comment,
-              ThumbsDown: comments[index].ThumbsDown += 1
+              ThumbsDown: (comments[index].ThumbsDown += 1),
             }
           }
         }
@@ -356,7 +362,8 @@ export function CommentSection({
               flex: 1,
               color: "#4a5568",
               opacity: 0.8,
-              visibility: !loading && comments.length > 0 ? "visible" : "hidden",
+              visibility:
+                !loading && comments.length > 0 ? "visible" : "hidden",
             }}
           >
             comments in your area:
@@ -374,13 +381,13 @@ export function CommentSection({
               {Object.keys(cities).map((city) => {
                 // Check if the city is "Custom Location" and only render it if customLocation is set
                 if (city === "Custom Location" && !customLocation) {
-                  return null;
+                  return null
                 }
                 return (
                   <option key={city} value={city}>
                     {city}
                   </option>
-                );
+                )
               })}
             </select>
           </div>
@@ -397,7 +404,15 @@ export function CommentSection({
           }}
         >
           {loading ? (
-            <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '200px', justifyContent: 'center' }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                width: "100%",
+                height: "200px",
+                justifyContent: "center",
+              }}
+            >
               <Spinner />
             </div>
           ) : comments.length > 0 ? (
@@ -433,7 +448,7 @@ export function CommentSection({
                       onClick={() => handleThumbUpOrDown(index, "up")}
                       style={{
                         fontSize: "15px",
-                        color: 'black',
+                        color: "black",
                         backgroundColor: "#ffffff",
                         borderRadius: "10px",
                         boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
@@ -658,10 +673,7 @@ export function Spinner() {
   )
 }
 
-export function WeatherCard({
-  weatherData,
-  loading
-}) {
+export function WeatherCard({ weatherData, loading }) {
   const weatherIcon = {
     Clouds: <WiDayCloudy className="text-gray-500 text-5xl" />,
     Clear: <WiDaySunny className="text-yellow-500 text-5xl" />,
@@ -672,34 +684,54 @@ export function WeatherCard({
     Mist: <WiFog className="text-gray-400 text-5xl" />,
   }
 
-
-  const { main, temp, wind, humidity, feels_like, description } = weatherData ? weatherData : {};
+  const { main, temp, wind, humidity, feels_like, description } = weatherData
+    ? weatherData
+    : {}
 
   return (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      height: "40%",
-      width: "100%",
-    }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "40%",
+        width: "100%",
+      }}
+    >
       {loading ? (
         <div>
-          <Spinner style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }} />
+          <Spinner
+            style={{
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          />
         </div>
       ) : (
         <>
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-          }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
             <div style={{ display: "flex", alignItems: "center" }}>
-              {weatherIcon[main] || <WiDaySunny className="text-yellow-500 text-5xl" />}
+              {weatherIcon[main] || (
+                <WiDaySunny className="text-yellow-500 text-5xl" />
+              )}
               <div style={{ marginLeft: "16px" }}>
-                <h2 style={{ fontSize: "36px", fontWeight: "bold", color: "#2b6cb0" }}>
+                <h2
+                  style={{
+                    fontSize: "36px",
+                    fontWeight: "bold",
+                    color: "#2b6cb0",
+                  }}
+                >
                   {main}
                 </h2>
                 <p style={{ fontSize: "20px", color: "#4a5568" }}>
@@ -709,14 +741,16 @@ export function WeatherCard({
               </div>
             </div>
           </div>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "16px",
-            color: "#4a5568",
-            fontSize: "18px",
-            marginTop: "16px",
-          }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "16px",
+              color: "#4a5568",
+              fontSize: "18px",
+              marginTop: "16px",
+            }}
+          >
             <div style={{ display: "flex", alignItems: "center" }}>
               <WiHumidity className="text-blue-500 text-4xl mr-2" />
               <span>Humidity: {humidity}%</span>
@@ -726,19 +760,21 @@ export function WeatherCard({
               <span>Wind: {wind.speed} m/h</span>
             </div>
           </div>
-          <div style={{
-            fontStyle: "italic",
-            textAlign: "center",
-            color: "#718096",
-            fontSize: "18px",
-            marginTop: "8px",
-          }}>
+          <div
+            style={{
+              fontStyle: "italic",
+              textAlign: "center",
+              color: "#718096",
+              fontSize: "18px",
+              marginTop: "8px",
+            }}
+          >
             &quot;{description}&quot;
           </div>
         </>
       )}
     </div>
-  );
+  )
 }
 
 function MapComponent({ lat, lon, updateLocation }) {
@@ -808,7 +844,7 @@ WeatherCard.propTypes = {
   }),
   lat: PropTypes.number,
   lon: PropTypes.number,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
 }
 
 MapComponent.propTypes = {
@@ -825,7 +861,7 @@ CommentSection.propTypes = {
     longitude: PropTypes.number,
   }),
   setCustomLocation: PropTypes.func,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
 }
 
 export default App

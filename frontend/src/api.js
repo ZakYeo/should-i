@@ -14,7 +14,14 @@ export const checkCoat = async (latitude, longitude) => {
   }
 }
 
-export const saveCommentToDB = async (userName, commentDescription, thumbsUpAmount, thumbsDownAmount, latitude, longitude) => {
+export const saveCommentToDB = async (
+  userName,
+  commentDescription,
+  thumbsUpAmount,
+  thumbsDownAmount,
+  latitude,
+  longitude,
+) => {
   try {
     const response = await axios.post(
       `${API_URL}comment/save`,
@@ -24,33 +31,32 @@ export const saveCommentToDB = async (userName, commentDescription, thumbsUpAmou
         thumbsUpAmount,
         thumbsDownAmount,
         latitude,
-        longitude
+        longitude,
       },
       {
         headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    );
-    return response.data;
+          "Content-Type": "application/json",
+        },
+      },
+    )
+    return response.data
   } catch (error) {
-    console.error("Error saving comment to DB", error);
-    throw error;
+    console.error("Error saving comment to DB", error)
+    throw error
   }
 }
 
 export const getNearbyComments = async (latitude, longitude) => {
   try {
-    const response = await axios.get(
-      `${API_URL}comment/get/nearby`, {
+    const response = await axios.get(`${API_URL}comment/get/nearby`, {
       params: {
         lat: latitude,
-        lon: longitude
-      }
-    });
-    return response.data;
+        lon: longitude,
+      },
+    })
+    return response.data
   } catch (error) {
-    console.error('Error fetching nearby comments:', error);
-    throw error;
+    console.error("Error fetching nearby comments:", error)
+    throw error
   }
 }
