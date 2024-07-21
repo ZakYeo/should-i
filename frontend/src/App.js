@@ -15,7 +15,6 @@ import "./App.css"
 import { GoogleMap, LoadScript, Marker, Circle } from "@react-google-maps/api"
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa"
 import PropTypes from "prop-types"
-import { setSelectionRange } from "@testing-library/user-event/dist/utils"
 
 const MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
 
@@ -682,7 +681,7 @@ export function WeatherCard({
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      height: "40%", // Adjust this as needed
+      height: "40%",
       width: "100%",
     }}>
       {loading ? (
