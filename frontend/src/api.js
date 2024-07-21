@@ -4,9 +4,6 @@ const API_URL = process.env.REACT_APP_API_URL
 
 export const checkCoat = async (latitude, longitude) => {
   try {
-    console.log(`${API_URL}check-coat?lat=${latitude}&lon=${longitude}`)
-    console.log(`${API_URL}check-coat?lat=${latitude}&lon=${longitude}`)
-    console.log(`${API_URL}check-coat?lat=${latitude}&lon=${longitude}`)
     const response = await axios.get(
       `${API_URL}check-coat?lat=${latitude}&lon=${longitude}`,
     )
@@ -51,10 +48,6 @@ export const getNearbyComments = async (latitude, longitude) => {
         lon: longitude
       }
     });
-    console.log(response);
-    console.log()
-    console.log()
-    console.log(response.data)
     return response.data;
   } catch (error) {
     console.error('Error fetching nearby comments:', error);
