@@ -12,12 +12,12 @@ import {
   WiFog,
 } from "react-icons/wi"
 import "./App.css"
-import { GoogleMap, LoadScript, Marker, Circle } from "@react-google-maps/api"
+import { FaThumbsUp, FaThumbsDown } from "react-icons/fa"
 import PropTypes from "prop-types"
 import { ShouldI } from "./components/ShouldI"
 import { CommentSection } from "./components/CommentSection"
-import { FaThumbsUp, FaThumbsDown } from "react-icons/fa"
-const MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
+
+import { MapComponent } from "./components/MapComponent"
 
 export function App() {
   const [shouldWearCoat, setShouldWearCoat] = useState(null)
@@ -395,59 +395,6 @@ export function WeatherCard({ weatherData, loading }) {
   )
 }
 
-function MapComponent({ lat, lon, updateLocation }) {
-  const containerStyle = {
-    width: "100%",
-    height: "100%",
-  }
-
-  const circleOptions = {
-    strokeColor: "black",
-    strokeOpacity: 0.8,
-    strokeWeight: 2,
-    fillColor: "#ADD8E6",
-    fillOpacity: 0.2,
-    center: { lat, lng: lon },
-    radius: 2000,
-  }
-
-  const handleMapDoubleClick = async (event) => {
-    const newLat = event.latLng.lat()
-    const newLng = event.latLng.lng()
-    await updateLocation(
-      {
-        latitude: newLat,
-        longitude: newLng,
-      },
-      true,
-    )
-  }
-
-  return (
-    <LoadScript
-      googleMapsApiKey={MAPS_API_KEY}
-      loadingElement={<div>Loading...</div>}
-    >
-      <div
-        style={{
-          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
-          width: "100%",
-          height: "400px",
-        }}
-      >
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={{ lat, lng: lon }}
-          zoom={13}
-          onDblClick={handleMapDoubleClick}
-        >
-          <Marker position={{ lat, lng: lon }} />
-          <Circle center={{ lat, lng: lon }} options={circleOptions} />
-        </GoogleMap>
-      </div>
-    </LoadScript>
-  )
-}
 
 WeatherCard.propTypes = {
   weatherData: PropTypes.shape({
@@ -465,11 +412,6 @@ WeatherCard.propTypes = {
   loading: PropTypes.bool,
 }
 
-MapComponent.propTypes = {
-  lat: PropTypes.number,
-  lon: PropTypes.number,
-  updateLocation: PropTypes.func,
-}
 
 
 
