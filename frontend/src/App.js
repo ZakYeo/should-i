@@ -58,21 +58,6 @@ export function App() {
     }
   }, [])
 
-  /*useEffect(() => {
-    if (latLon) {
-      const fetchData = async () => {
-        try {
-          const data = await checkCoat(latLon.latitude, latLon.longitude)
-          setShouldWearCoat(data.shouldWearCoat)
-          setWeatherData(data)
-          setLoading(false)
-        } catch (error) {
-          console.error("Error fetching coat status", error)
-        }
-      }
-      fetchData()
-    }
-  }, [latLon])*/
   return (
     <div
       style={{
