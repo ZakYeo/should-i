@@ -22,13 +22,14 @@ A web application built in ReactJS designed to pull weather data for the user ba
     - lambdas
     - DynamoDB to store comments
     - DynamoDB to retrieve nearby comments based on location
+    - Lambda body / query string parameters validation including:
+    - Missing / null
+    - Invalid / out of bounds
 
 ## Planned Features
 
 - AWS backend:
     - Lambda error handling including:
-        - Missing body 
-        - Incorrect body
         - Curseword detection + filter
     - API Gateway rate limiting
     - Terraform to control & manage deployment of AWS resources
