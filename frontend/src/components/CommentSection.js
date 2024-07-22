@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa"
-import { Spinner } from "../App"
+import { Spinner } from "./Spinner"
 import { getNearbyComments } from "../api"
 
 export function CommentSection({

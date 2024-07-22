@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 import {
@@ -12,7 +11,7 @@ import {
   WiSprinkle,
   WiFog,
 } from "react-icons/wi"
-import { Spinner } from "../App"
+import { Spinner } from "./Spinner"
 
 
 export function WeatherCard({ weatherData, loading }) {

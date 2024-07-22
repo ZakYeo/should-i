@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 
-import { Spinner } from "../App"
+import { Spinner } from "./Spinner"
 
 export const ShouldI = ({ loading, shouldWearCoat }) => {
 
