@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import geohash from 'ngeohash';
-
+import Filter from 'bad-words';
 
 const isLocal = true;
 // command sam local start-api starts aws resources in a docker container, so use this endpoint
@@ -17,7 +17,7 @@ const LATITUDE_MINIMUM = -90;
 const LATITUDE_MAXIMUM = 90;
 const LONGITUDE_MINIMUM = -180;
 const LONGITUDE_MAXIMUM = 180;
-
+const filter = new Filter();
 
 export async function handler(event) {
   const { userName, commentDescription, latitude, longitude } = JSON.parse(event.body);
@@ -34,10 +34,30 @@ export async function handler(event) {
     };
   }
 
+  if (filter.isProfane(userName)) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Username contains inappropriate language' }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+  }
+
   if (!commentDescription || commentDescription.trim() === '') {
     return {
       statusCode: 400,
       body: JSON.stringify({ message: 'Comment description cannot be empty or null' }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+  }
+
+  if (filter.isProfane(commentDescription)) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Comment description contains inappropriate language' }),
       headers: {
         "Content-Type": "application/json"
       }
@@ -67,8 +87,8 @@ export async function handler(event) {
     };
   }
 
-  parsedLatitude = Number(latitude.toFixed(6));
-  parsedLongitude = Number(longitude.toFixed(6));
+  parsedLatitude = Number(parsedLatitude.toFixed(6));
+  parsedLongitude = Number(parsedLongitude.toFixed(6));
 
   if (parsedLatitude < LATITUDE_MINIMUM || parsedLatitude > LATITUDE_MAXIMUM ||
     parsedLongitude < LONGITUDE_MINIMUM || parsedLongitude > LONGITUDE_MAXIMUM) {
