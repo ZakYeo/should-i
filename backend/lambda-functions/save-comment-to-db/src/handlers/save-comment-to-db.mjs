@@ -16,9 +16,9 @@ const precision = 6;
 
 
 export async function handler(event) {
-  const { userName, commentDescription, thumbsUpAmount, thumbsDownAmount, latitude, longitude } = JSON.parse(event.body);
+  const { userName, commentDescription, latitude, longitude } = JSON.parse(event.body);
   console.log(JSON.stringify(event))
-  console.log(`Saving comment to DB using parameters: `, userName, commentDescription, thumbsUpAmount, thumbsDownAmount, latitude, longitude)
+  console.log(`Saving comment to DB using parameters: `, userName, commentDescription, latitude, longitude)
 
   const commentId = Date.now().toString();
 
@@ -30,8 +30,8 @@ export async function handler(event) {
       CommentId: commentId,
       UserName: userName,
       Description: commentDescription,
-      ThumbsUp: thumbsUpAmount,
-      ThumbsDown: thumbsDownAmount,
+      ThumbsUp: 0,
+      ThumbsDown: 0,
       Latitude: latitude,
       Longitude: longitude,
       Geohash: geoHash

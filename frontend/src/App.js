@@ -263,7 +263,7 @@ export function CommentSection({
   }
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const comments = await getNearbyComments(lat, lon)
       setComments(comments)
     })()
@@ -315,7 +315,7 @@ export function CommentSection({
         Latitude: lat,
         Longitude: lon,
       }
-      saveCommentToDB(username, comment, 0, 0, lat, lon)
+      saveCommentToDB(username, comment, lat, lon)
       setComments([...comments, newComment])
       setComment("")
       setUsername("")

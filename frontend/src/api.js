@@ -17,8 +17,6 @@ export const checkCoat = async (latitude, longitude) => {
 export const saveCommentToDB = async (
   userName,
   commentDescription,
-  thumbsUpAmount,
-  thumbsDownAmount,
   latitude,
   longitude,
 ) => {
@@ -28,8 +26,6 @@ export const saveCommentToDB = async (
       {
         userName,
         commentDescription,
-        thumbsUpAmount,
-        thumbsDownAmount,
         latitude,
         longitude,
       },
