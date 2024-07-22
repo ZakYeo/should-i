@@ -1,0 +1,6 @@
+{
+  "queryStringParameters": {
+    "lat": "not_a_number",
+    "lon": "also_not_a_number"
+  }
+}
