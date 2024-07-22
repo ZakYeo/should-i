@@ -1,6 +1,10 @@
 import fetch from "node-fetch"
 
 const WEATHER_API_KEY = process.env.API_KEY
+const LATITUDE_MINIMUM = -90;
+const LATITUDE_MAXIMUM = 90;
+const LONGITUDE_MINIMUM = -180;
+const LONGITUDE_MAXIMUM = 180;
 
 /**
  * Lambda to grab and returns weather data based on lat and lon from query parameters
@@ -42,18 +46,41 @@ export const handler = async (event) => {
   const { lat, lon } = event.queryStringParameters
 
   if (!lat || !lon) {
-
     return {
       statusCode: 400,
+      body: JSON.stringify({ message: 'Missing latitude or longitude parameter' }),
       headers: {
         "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        success: false,
-        message: "missing lat or lon query parameters"
-      })
+      }
     };
   }
+
+  let parsedLatitude = parseFloat(lat);
+  let parsedLongitude = parseFloat(lon);
+  if (isNaN(lat) || isNaN(lon)) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Latitude and longitude must be valid numbers' }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+  }
+
+  parsedLatitude = Number(parsedLatitude.toFixed(6));
+  parsedLongitude = Number(parsedLongitude.toFixed(6));
+
+  if (parsedLatitude < LATITUDE_MINIMUM || parsedLatitude > LATITUDE_MAXIMUM ||
+    parsedLongitude < LONGITUDE_MINIMUM || parsedLongitude > LONGITUDE_MAXIMUM) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Latitude must be between -90 and 90, and longitude must be between -180 and 180' }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+  }
+
   let resp;
   const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`
   try {
