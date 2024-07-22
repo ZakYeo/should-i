@@ -13,12 +13,73 @@ const client = new DynamoDBClient({
 });
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 const precision = 6;
+const LATITUDE_MINIMUM = -90;
+const LATITUDE_MAXIMUM = 90;
+const LONGITUDE_MINIMUM = -180;
+const LONGITUDE_MAXIMUM = 180;
 
 
 export async function handler(event) {
   const { userName, commentDescription, latitude, longitude } = JSON.parse(event.body);
   console.log(JSON.stringify(event))
   console.log(`Saving comment to DB using parameters: `, userName, commentDescription, latitude, longitude)
+
+  if (!userName || userName.trim() === '') {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Username cannot be empty or null' }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+  }
+
+  if (!commentDescription || commentDescription.trim() === '') {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Comment description cannot be empty or null' }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+  }
+
+
+  if (!latitude || !longitude) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Missing latitude or longitude parameter' }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+  }
+
+  let parsedLatitude = parseFloat(latitude);
+  let parsedLongitude = parseFloat(longitude);
+  if (isNaN(latitude) || isNaN(longitude)) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Latitude and longitude must be valid numbers' }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+  }
+
+  parsedLatitude = Number(latitude.toFixed(6));
+  parsedLongitude = Number(longitude.toFixed(6));
+
+  if (parsedLatitude < LATITUDE_MINIMUM || parsedLatitude > LATITUDE_MAXIMUM ||
+    parsedLongitude < LONGITUDE_MINIMUM || parsedLongitude > LONGITUDE_MAXIMUM) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Latitude must be between -90 and 90, and longitude must be between -180 and 180' }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+  }
 
   const commentId = Date.now().toString();
 
