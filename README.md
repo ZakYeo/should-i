@@ -42,6 +42,7 @@ A web application built in ReactJS designed to pull weather data for the user ba
 - Background footage changing based on weather data
 - Mobile support / support for different screen sizes
 - Watchman for hot reloading/deployment of local aws services
+- Error messages if non-ok response when submitting a comment
 
 
 ## How to run the app?
