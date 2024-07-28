@@ -2,4 +2,4 @@
 
 cd frontend/
 npm run lint
-
+npm test
