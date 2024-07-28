@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { Spinner } from "./Spinner";
 import { getNearbyComments, saveCommentToDB } from "../api";
-import '../App.css'
+import "../App.css";
 
 export function CommentSection({
   lat,
@@ -348,14 +348,21 @@ export function CommentSection({
               color: "#fff",
               border: "none",
               cursor: isSubmitting ? "not-allowed" : "pointer",
-            }} >
-            <span style={{ visibility: 'hidden' }}>...</span>{/* To maintain 'Submit' position in button */}
+            }}
+          >
+            <span style={{ visibility: "hidden" }}>...</span>
+            {/* To maintain 'Submit' position in button */}
             Submit
-            <span className={isSubmitting ? "fade-animation" : ""} style={{ opacity: isSubmitting ? 1 : 0 }}>...</span>
+            <span
+              className={isSubmitting ? "fade-animation" : ""}
+              style={{ opacity: isSubmitting ? 1 : 0 }}
+            >
+              ...
+            </span>
           </button>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
 
