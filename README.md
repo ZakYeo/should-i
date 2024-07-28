@@ -20,6 +20,7 @@ A web application built in ReactJS designed to pull weather data for the user ba
 - Pre-commit hook using husky with ESLint & Prettier
 - .env environment variables for API keys
 - Query DynamoDB to grab nearby user comments using Geohash
+- Unit tests & unit test running on pre-commit hook
 - Local AWS setup including:
     - API Gateway
     - lambdas
@@ -37,7 +38,7 @@ A web application built in ReactJS designed to pull weather data for the user ba
     - API Gateway rate limiting
     - Terraform to control & manage deployment of AWS resources
     - Add or remove to thumbs up / thumbs down ratings in DynamoDB
-- Unit & integration tests
+- More unit & integration tests
 - Pre-commit hook to run integration & unit tests
 - New updated UI
 - Set loading animations when changing location via drop down component 
