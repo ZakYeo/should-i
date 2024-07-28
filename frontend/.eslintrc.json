@@ -11,15 +11,24 @@
     "plugin:react/recommended",
     "plugin:prettier/recommended"
   ],
-  "plugins": ["react", "prettier"],
+  "plugins": [
+    "react",
+    "prettier"
+  ],
   "rules": {
     "prettier/prettier": "warn",
     "no-unused-vars": "warn",
-    "no-console": "warn",
+    "no-console": "off",
     "eqeqeq": "warn",
     "curly": "warn",
-    "quotes": ["warn", "double"],
-    "semi": ["warn", "always"],
+    "quotes": [
+      "warn",
+      "double"
+    ],
+    "semi": [
+      "warn",
+      "always"
+    ],
     "no-undef": "warn",
     "no-redeclare": "warn"
   },
