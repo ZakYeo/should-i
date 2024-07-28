@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react"
-import PropTypes from "prop-types"
+import React from "react";
+import PropTypes from "prop-types";
 import {
   WiDaySunny,
   WiHumidity,
@@ -10,8 +10,8 @@ import {
   WiThunderstorm,
   WiSprinkle,
   WiFog,
-} from "react-icons/wi"
-import { Spinner } from "./Spinner"
+} from "react-icons/wi";
+import { Spinner } from "./Spinner";
 
 export function WeatherCard({ weatherData, loading }) {
   const weatherIcon = {
@@ -22,11 +22,11 @@ export function WeatherCard({ weatherData, loading }) {
     Thunderstorm: <WiThunderstorm className="text-purple-500 text-5xl" />,
     Drizzle: <WiSprinkle className="text-blue-300 text-5xl" />,
     Mist: <WiFog className="text-gray-400 text-5xl" />,
-  }
+  };
 
   const { main, temp, wind, humidity, feels_like, description } = weatherData
     ? weatherData
-    : {}
+    : {};
 
   return (
     <div
@@ -114,7 +114,7 @@ export function WeatherCard({ weatherData, loading }) {
         </>
       )}
     </div>
-  )
+  );
 }
 
 WeatherCard.propTypes = {
@@ -131,4 +131,4 @@ WeatherCard.propTypes = {
   lat: PropTypes.number,
   lon: PropTypes.number,
   loading: PropTypes.bool,
-}
+};

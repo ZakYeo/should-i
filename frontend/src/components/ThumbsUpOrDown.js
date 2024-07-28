@@ -1,26 +1,27 @@
-import React from "react"
+import React, { useState } from "react";
+import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 export function ThumbsUpOrDown() {
-  const [vote, setVote] = useState(null)
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [opacity, setOpacity] = useState(1)
-  const questionMessage = "Is this information accurate?"
-  const feedbackMessage = "Thank you for your feedback"
+  const [vote, setVote] = useState(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [opacity, setOpacity] = useState(1);
+  const questionMessage = "Is this information accurate?";
+  const feedbackMessage = "Thank you for your feedback";
 
   const handleVote = (type) => {
-    setOpacity(0) // Start fade out
+    setOpacity(0); // Start fade out
     setTimeout(() => {
       if (vote === type) {
-        setVote(null)
-        setShowFeedback(false)
+        setVote(null);
+        setShowFeedback(false);
       } else {
-        setVote(type)
-        sendFeedback(type === "up" ? true : false)
-        setShowFeedback(true)
+        setVote(type);
+        //sendFeedback(type === "up" ? true : false);
+        setShowFeedback(true);
       }
-      setOpacity(1) // Start fade in
-    }, 500)
-  }
+      setOpacity(1); // Start fade in
+    }, 500);
+  };
 
   const renderText = (message, slide = false) => {
     return message.split("").map((char, index) => (
@@ -36,8 +37,8 @@ export function ThumbsUpOrDown() {
       >
         {char}
       </span>
-    ))
-  }
+    ));
+  };
 
   return (
     <div
@@ -93,5 +94,5 @@ export function ThumbsUpOrDown() {
         </div>
       )}
     </div>
-  )
+  );
 }

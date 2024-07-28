@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react"
-import PropTypes from "prop-types"
-
-import { FaThumbsUp, FaThumbsDown } from "react-icons/fa"
-import { Spinner } from "./Spinner"
-import { getNearbyComments } from "../api"
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { Spinner } from "./Spinner";
+import { getNearbyComments, saveCommentToDB } from "../api";
 
 export function CommentSection({
   lat,
@@ -13,39 +12,44 @@ export function CommentSection({
   setCustomLocation,
   loading,
 }) {
-  const [username, setUsername] = useState("")
-  const [comment, setComment] = useState("")
-  const [comments, setComments] = useState([])
-  const currentUser = "exampleUsername"
-  const [selectedLocation, setSelectedLocation] = useState("Your Location")
+  const [username, setUsername] = useState("");
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState("Your Location");
 
   useEffect(() => {
     if (customLocation) {
-      console.log("Custom location changed:", customLocation)
-      setSelectedLocation("Custom Location")
+      console.log("Custom location changed:", customLocation);
+      setSelectedLocation("Custom Location");
     }
-  }, [lat, lon, setLatLon, customLocation?.latitude, customLocation?.longitude])
+  }, [
+    lat,
+    lon,
+    setLatLon,
+    customLocation?.latitude,
+    customLocation?.longitude,
+  ]);
 
   const cities = {
     "Your Location": { lat, lon },
     "Custom Location": customLocation || { lat, lon },
     London: { lat: 51.5074, lon: -0.1278 },
     Brighton: { lat: 50.8225, lon: -0.1372 },
-  }
+  };
 
   useEffect(() => {
-    ;(async () => {
-      const comments = await getNearbyComments(lat, lon)
-      setComments(comments)
-    })()
-  }, [lat, lon])
+    (async () => {
+      const comments = await getNearbyComments(lat, lon);
+      setComments(comments);
+    })();
+  }, [lat, lon]);
 
   const handleLocationChange = (e) => {
-    setSelectedLocation(e.target.value)
+    setSelectedLocation(e.target.value);
 
     if (e.target.value === "Custom Location") {
-      setLatLon(customLocation)
-      setCustomLocation(customLocation)
+      setLatLon(customLocation);
+      setCustomLocation(customLocation);
     } else if (e.target.value === "Your Location") {
       // If "Your Location" is selected, use the initial geolocation
       navigator.geolocation.getCurrentPosition(
@@ -53,28 +57,28 @@ export function CommentSection({
           const yourLocation = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          }
-          setLatLon(yourLocation)
-          setCustomLocation(null)
+          };
+          setLatLon(yourLocation);
+          setCustomLocation(null);
         },
         (error) => {
-          console.error("Error obtaining location:", error)
+          console.error("Error obtaining location:", error);
         },
-      )
+      );
     } else {
-      const cityCoords = cities[e.target.value]
-      setLatLon({ latitude: cityCoords.lat, longitude: cityCoords.lon })
-      setCustomLocation(null)
+      const cityCoords = cities[e.target.value];
+      setLatLon({ latitude: cityCoords.lat, longitude: cityCoords.lon });
+      setCustomLocation(null);
     }
-  }
+  };
 
   const handleUsernameChange = (e) => {
-    setUsername(e.target.value)
-  }
+    setUsername(e.target.value);
+  };
 
   const handleCommentChange = (e) => {
-    setComment(e.target.value)
-  }
+    setComment(e.target.value);
+  };
 
   const handleCommentSubmit = async () => {
     if (username.trim() !== "" && comment.trim() !== "") {
@@ -85,13 +89,13 @@ export function CommentSection({
         ThumbsDown: 0,
         Latitude: lat,
         Longitude: lon,
-      }
-      saveCommentToDB(username, comment, lat, lon)
-      setComments([...comments, newComment])
-      setComment("")
-      setUsername("")
+      };
+      saveCommentToDB(username, comment, lat, lon);
+      setComments([...comments, newComment]);
+      setComment("");
+      setUsername("");
     }
-  }
+  };
 
   const handleThumbUpOrDown = (commentIndex, type) => {
     setComments(
@@ -101,18 +105,18 @@ export function CommentSection({
             return {
               ...comment,
               ThumbsUp: (comments[index].ThumbsUp += 1),
-            }
+            };
           } else if (type === "down") {
             return {
               ...comment,
               ThumbsDown: (comments[index].ThumbsDown += 1),
-            }
+            };
           }
         }
-        return comment
+        return comment;
       }),
-    )
-  }
+    );
+  };
 
   return (
     <div style={{ width: "100%", marginTop: "20px" }}>
@@ -152,13 +156,13 @@ export function CommentSection({
               {Object.keys(cities).map((city) => {
                 // Check if the city is "Custom Location" and only render it if customLocation is set
                 if (city === "Custom Location" && !customLocation) {
-                  return null
+                  return null;
                 }
                 return (
                   <option key={city} value={city}>
                     {city}
                   </option>
-                )
+                );
               })}
             </select>
           </div>
@@ -338,7 +342,7 @@ export function CommentSection({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 CommentSection.propTypes = {
@@ -351,4 +355,4 @@ CommentSection.propTypes = {
   }),
   setCustomLocation: PropTypes.func,
   loading: PropTypes.bool,
-}
+};

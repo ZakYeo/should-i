@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react"
-import PropTypes from "prop-types"
-import { GoogleMap, LoadScript, Marker, Circle } from "@react-google-maps/api"
+import React from "react";
+import PropTypes from "prop-types";
+import { GoogleMap, LoadScript, Marker, Circle } from "@react-google-maps/api";
 
-const MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
+const MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
 export function MapComponent({ lat, lon, updateLocation }) {
   const containerStyle = {
     width: "100%",
     height: "100%",
-  }
+  };
 
   const circleOptions = {
     strokeColor: "black",
@@ -18,19 +18,19 @@ export function MapComponent({ lat, lon, updateLocation }) {
     fillOpacity: 0.2,
     center: { lat, lng: lon },
     radius: 2000,
-  }
+  };
 
   const handleMapDoubleClick = async (event) => {
-    const newLat = event.latLng.lat()
-    const newLng = event.latLng.lng()
+    const newLat = event.latLng.lat();
+    const newLng = event.latLng.lng();
     await updateLocation(
       {
         latitude: newLat,
         longitude: newLng,
       },
       true,
-    )
-  }
+    );
+  };
 
   return (
     <LoadScript
@@ -55,11 +55,11 @@ export function MapComponent({ lat, lon, updateLocation }) {
         </GoogleMap>
       </div>
     </LoadScript>
-  )
+  );
 }
 
 MapComponent.propTypes = {
   lat: PropTypes.number,
   lon: PropTypes.number,
   updateLocation: PropTypes.func,
-}
+};

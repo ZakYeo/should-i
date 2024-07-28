@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react"
-import PropTypes from "prop-types"
+import React from "react";
+import PropTypes from "prop-types";
 
-import { Spinner } from "./Spinner"
+import { Spinner } from "./Spinner";
 
 export const ShouldI = ({ loading, shouldWearCoat }) => {
   return (
@@ -54,10 +54,10 @@ export const ShouldI = ({ loading, shouldWearCoat }) => {
         </p>
       )}
     </div>
-  )
-}
+  );
+};
 
 ShouldI.propTypes = {
   loading: PropTypes.bool,
   shouldWearCoat: PropTypes.bool,
-}
+};

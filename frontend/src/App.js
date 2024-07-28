@@ -1,43 +1,41 @@
-import React, { useState, useEffect } from "react"
-import { checkCoat, getNearbyComments, saveCommentToDB } from "./api"
-import "./App.css"
-import { FaThumbsUp, FaThumbsDown } from "react-icons/fa"
-import PropTypes from "prop-types"
-import { ShouldI } from "./components/ShouldI"
-import { CommentSection } from "./components/CommentSection"
-import { WeatherCard } from "./components/WeatherCard"
-import { MapComponent } from "./components/MapComponent"
+import React, { useState, useEffect } from "react";
+import { checkCoat } from "./api";
+import "./App.css";
+import { ShouldI } from "./components/ShouldI";
+import { CommentSection } from "./components/CommentSection";
+import { WeatherCard } from "./components/WeatherCard";
+import { MapComponent } from "./components/MapComponent";
 
 export function App() {
-  const [shouldWearCoat, setShouldWearCoat] = useState(null)
-  const [latLon, setLatLon] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [weatherData, setWeatherData] = useState(null)
-  const [customLocation, setCustomLocation] = useState(null)
+  const [shouldWearCoat, setShouldWearCoat] = useState(null);
+  const [latLon, setLatLon] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [weatherData, setWeatherData] = useState(null);
+  const [customLocation, setCustomLocation] = useState(null);
 
   const updateLocation = React.useCallback(
     async (newLocation, isCustom = false) => {
-      console.log("Updating location:", newLocation)
-      setLatLon(newLocation)
+      console.log("Updating location:", newLocation);
+      setLatLon(newLocation);
       if (isCustom) {
-        setCustomLocation({ ...newLocation })
+        setCustomLocation({ ...newLocation });
       }
       try {
-        setLoading(true)
+        setLoading(true);
         const data = await checkCoat(
           newLocation.latitude,
           newLocation.longitude,
-        )
-        setWeatherData(data)
-        setShouldWearCoat(data.shouldWearCoat)
-        setLoading(false)
+        );
+        setWeatherData(data);
+        setShouldWearCoat(data.shouldWearCoat);
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching weather data", error)
-        setLoading(false)
+        console.error("Error fetching weather data", error);
+        setLoading(false);
       }
     },
     [],
-  )
+  );
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -46,17 +44,17 @@ export function App() {
           const initialLocation = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          }
-          updateLocation(initialLocation)
+          };
+          updateLocation(initialLocation);
         },
         (error) => {
-          console.error("Error obtaining location:", error)
+          console.error("Error obtaining location:", error);
         },
-      )
+      );
     } else {
-      console.log("Geolocation is not supported by this browser.")
+      console.log("Geolocation is not supported by this browser.");
     }
-  }, [])
+  }, []);
 
   return (
     <div
@@ -157,7 +155,7 @@ export function App() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
