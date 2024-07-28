@@ -1,6 +1,5 @@
 import React from "react"
 
-
 export function ThumbsUpOrDown() {
   const [vote, setVote] = useState(null)
   const [showFeedback, setShowFeedback] = useState(false)

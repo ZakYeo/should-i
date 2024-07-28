@@ -4,7 +4,6 @@ import PropTypes from "prop-types"
 import { Spinner } from "./Spinner"
 
 export const ShouldI = ({ loading, shouldWearCoat }) => {
-
   return (
     <div
       style={{
@@ -58,8 +57,7 @@ export const ShouldI = ({ loading, shouldWearCoat }) => {
   )
 }
 
-
 ShouldI.propTypes = {
   loading: PropTypes.bool,
-  shouldWearCoat: PropTypes.bool
+  shouldWearCoat: PropTypes.bool,
 }

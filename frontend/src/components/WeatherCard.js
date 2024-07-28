@@ -13,7 +13,6 @@ import {
 } from "react-icons/wi"
 import { Spinner } from "./Spinner"
 
-
 export function WeatherCard({ weatherData, loading }) {
   const weatherIcon = {
     Clouds: <WiDayCloudy className="text-gray-500 text-5xl" />,

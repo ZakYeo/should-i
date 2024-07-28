@@ -34,7 +34,7 @@ export function CommentSection({
   }
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       const comments = await getNearbyComments(lat, lon)
       setComments(comments)
     })()
@@ -340,7 +340,6 @@ export function CommentSection({
     </div>
   )
 }
-
 
 CommentSection.propTypes = {
   lat: PropTypes.number,

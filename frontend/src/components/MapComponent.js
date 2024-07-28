@@ -58,7 +58,6 @@ export function MapComponent({ lat, lon, updateLocation }) {
   )
 }
 
-
 MapComponent.propTypes = {
   lat: PropTypes.number,
   lon: PropTypes.number,
