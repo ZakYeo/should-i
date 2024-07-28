@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { Spinner } from "./Spinner";
 import { getNearbyComments, saveCommentToDB } from "../api";
+import '../App.css'
 
 export function CommentSection({
   lat,
@@ -16,6 +17,7 @@ export function CommentSection({
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState("Your Location");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (customLocation) {
@@ -85,6 +87,7 @@ export function CommentSection({
       alert("Username and comment cannot be empty.");
       return;
     }
+    setIsSubmitting(true);
     const result = await saveCommentToDB(username, comment, lat, lon);
     if (result.statusCode === 200) {
       setComments([
@@ -103,6 +106,7 @@ export function CommentSection({
     } else if (result.statusCode >= 400) {
       alert(`Error: ${result.data.message}`);
     }
+    setIsSubmitting(false);
   };
 
   const handleThumbUpOrDown = (commentIndex, type) => {
@@ -335,21 +339,23 @@ export function CommentSection({
             }}
           />
           <button
-            onClick={handleCommentSubmit}
+            onClick={!isSubmitting ? handleCommentSubmit : null}
             style={{
               alignSelf: "flex-end",
               padding: "10px 20px",
               borderRadius: "5px",
-              backgroundColor: "#4a5568",
+              backgroundColor: isSubmitting ? "#b2bec3" : "#4a5568",
               color: "#fff",
               border: "none",
-            }}
-          >
+              cursor: isSubmitting ? "not-allowed" : "pointer",
+            }} >
+            <span style={{ visibility: 'hidden' }}>...</span>{/* To maintain 'Submit' position in button */}
             Submit
+            <span className={isSubmitting ? "fade-animation" : ""} style={{ opacity: isSubmitting ? 1 : 0 }}>...</span>
           </button>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
