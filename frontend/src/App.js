@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { checkCoat } from "./api";
+import { checkCoat } from "./util/api";
 import "./App.css";
 import { ShouldI } from "./components/ShouldI";
 import { CommentSection } from "./components/CommentSection";

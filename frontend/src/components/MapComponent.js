@@ -1,6 +1,6 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { GoogleMap, LoadScript, Marker, Circle } from "@react-google-maps/api";
+import { MapComponentPropTypes } from "../util/propTypes";
 
 const MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
@@ -58,8 +58,4 @@ export function MapComponent({ lat, lon, updateLocation }) {
   );
 }
 
-MapComponent.propTypes = {
-  lat: PropTypes.number,
-  lon: PropTypes.number,
-  updateLocation: PropTypes.func,
-};
+MapComponent.propTypes = MapComponentPropTypes;

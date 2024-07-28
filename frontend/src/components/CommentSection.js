@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { Spinner } from "./Spinner";
-import { getNearbyComments, saveCommentToDB } from "../api";
+import { getNearbyComments, saveCommentToDB } from "../util/api";
 import "../App.css";
+import { CommentSectionPropTypes } from "../util/propTypes";
 
 export function CommentSection({
   lat,
@@ -366,14 +366,4 @@ export function CommentSection({
   );
 }
 
-CommentSection.propTypes = {
-  lat: PropTypes.number,
-  lon: PropTypes.number,
-  setLatLon: PropTypes.func,
-  customLocation: PropTypes.shape({
-    latitude: PropTypes.number,
-    longitude: PropTypes.number,
-  }),
-  setCustomLocation: PropTypes.func,
-  loading: PropTypes.bool,
-};
+CommentSection.propTypes = CommentSectionPropTypes;

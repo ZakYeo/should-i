@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import {
   WiDaySunny,
   WiHumidity,
@@ -12,6 +11,7 @@ import {
   WiFog,
 } from "react-icons/wi";
 import { Spinner } from "./Spinner";
+import { WeatherCardPropTypes } from "../util/propTypes";
 
 export function WeatherCard({ weatherData, loading }) {
   const weatherIcon = {
@@ -117,18 +117,4 @@ export function WeatherCard({ weatherData, loading }) {
   );
 }
 
-WeatherCard.propTypes = {
-  weatherData: PropTypes.shape({
-    main: PropTypes.string,
-    temp: PropTypes.number,
-    wind: PropTypes.shape({
-      speed: PropTypes.number,
-    }),
-    humidity: PropTypes.number,
-    feels_like: PropTypes.number,
-    description: PropTypes.string,
-  }),
-  lat: PropTypes.number,
-  lon: PropTypes.number,
-  loading: PropTypes.bool,
-};
+WeatherCard.propTypes = WeatherCardPropTypes;
