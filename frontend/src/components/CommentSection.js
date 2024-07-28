@@ -81,19 +81,24 @@ export function CommentSection({
   };
 
   const handleCommentSubmit = async () => {
-    if (username.trim() !== "" && comment.trim() !== "") {
-      const newComment = {
+    if (username.trim() === "" || comment.trim() === "") {
+      alert("Username and comment cannot be empty.");
+      return;
+    }
+    const result = await saveCommentToDB(username, comment, lat, lon);
+    if (result.statusCode === 200) {
+      setComments([...comments, {
         UserName: username,
         Description: comment,
         ThumbsUp: 0,
         ThumbsDown: 0,
         Latitude: lat,
         Longitude: lon,
-      };
-      saveCommentToDB(username, comment, lat, lon);
-      setComments([...comments, newComment]);
+      }]);
       setComment("");
       setUsername("");
+    } else if (result.statusCode >= 400) {
+      alert(`Error: ${result.data.message}`);
     }
   };
 

@@ -35,10 +35,10 @@ export const saveCommentToDB = async (
         },
       },
     );
-    return response.data;
+    return { data: response.data, statusCode: response.status };
   } catch (error) {
     console.error("Error saving comment to DB", error);
-    throw error;
+    return { data: error.response?.data, statusCode: error.response?.status };
   }
 };
 
