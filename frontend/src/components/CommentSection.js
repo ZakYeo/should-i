@@ -87,14 +87,17 @@ export function CommentSection({
     }
     const result = await saveCommentToDB(username, comment, lat, lon);
     if (result.statusCode === 200) {
-      setComments([...comments, {
-        UserName: username,
-        Description: comment,
-        ThumbsUp: 0,
-        ThumbsDown: 0,
-        Latitude: lat,
-        Longitude: lon,
-      }]);
+      setComments([
+        ...comments,
+        {
+          UserName: username,
+          Description: comment,
+          ThumbsUp: 0,
+          ThumbsDown: 0,
+          Latitude: lat,
+          Longitude: lon,
+        },
+      ]);
       setComment("");
       setUsername("");
     } else if (result.statusCode >= 400) {
