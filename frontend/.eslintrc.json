@@ -18,7 +18,7 @@
     "no-console": "warn",
     "eqeqeq": "warn",
     "curly": "warn",
-    "quotes": ["warn", "single"],
+    "quotes": ["warn", "double"],
     "semi": ["warn", "always"],
     "no-undef": "warn",
     "no-redeclare": "warn"
