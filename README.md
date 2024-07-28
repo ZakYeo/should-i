@@ -43,6 +43,7 @@ A web application built in ReactJS designed to pull weather data for the user ba
 - Mobile support / support for different screen sizes
 - Watchman for hot reloading/deployment of local aws services
 - Error messages if non-ok response when submitting a comment
+- ESLinter for backend/ directory
 
 
 ## How to run the app?
