@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { Spinner } from "./Spinner";
-import { getNearbyComments, saveCommentToDB } from "../util/api";
+import {
+  getNearbyComments,
+  saveCommentToDB,
+  updateCommentVote,
+} from "../util/api";
 import "../App.css";
 import { CommentSectionPropTypes } from "../util/propTypes";
 
@@ -109,25 +113,29 @@ export function CommentSection({
     setIsSubmitting(false);
   };
 
-  const handleThumbUpOrDown = (commentIndex, type) => {
-    setComments(
-      comments.map((comment, index) => {
-        if (index === commentIndex) {
-          if (type === "up") {
+  const handleThumbUpOrDown = async (commentIndex, type) => {
+    const comment = comments[commentIndex];
+    const result = await updateCommentVote(
+      comment.CommentId,
+      type === "up" ? "up" : "down",
+    );
+    if (result.statusCode === 200) {
+      setComments(
+        comments.map((item, index) => {
+          if (index === commentIndex) {
             return {
-              ...comment,
-              ThumbsUp: (comments[index].ThumbsUp += 1),
-            };
-          } else if (type === "down") {
-            return {
-              ...comment,
-              ThumbsDown: (comments[index].ThumbsDown += 1),
+              ...item,
+              ThumbsUp: type === "up" ? item.ThumbsUp + 1 : item.ThumbsUp,
+              ThumbsDown:
+                type === "down" ? item.ThumbsDown + 1 : item.ThumbsDown,
             };
           }
-        }
-        return comment;
-      }),
-    );
+          return item;
+        }),
+      );
+    } else {
+      alert(`Error: ${result}`);
+    }
   };
 
   return (
