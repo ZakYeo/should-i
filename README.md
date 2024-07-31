@@ -60,7 +60,7 @@ A web application built in ReactJS designed to pull weather data for the user ba
 - Make sure you have docker running in the background
 - Run `./deploy-local-aws.sh` in `backend/` to deploy AWS backend
 - Run `npm start` in `frontend/` to deploy ReactJS web app frontend
-- Download the local DynamoDB files from ![here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html) and extract the folder
+- Download the local DynamoDB files from [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html) and extract the folder
 - Place the folder in ./backend
 - Startup local dynamoDB server by running `./deploy-local-dynamodb.sh && ./deploy-local-dynamodb-tables` (assuming you have a local instance of dynamoDB downloaded in that directory in a folder named dynamodb_local_latest)
 
