@@ -6,7 +6,7 @@ A web application built in ReactJS designed to pull weather data for the user ba
 - Live display of weather information based on location
 - Map display of user's location
 - Comment system to write & display comments from users
-- Thumbs up or down other users' comments
+- Thumbs up or down other users' comments (saves to DynamoDB)
 - View nearby comments submitted by other users based on location
 - Loading animations for components while fetching weather data
 - Loading animation on 'Submit' button when submitting a comment
@@ -25,6 +25,7 @@ A web application built in ReactJS designed to pull weather data for the user ba
     - API Gateway
     - lambdas
     - DynamoDB to store comments
+    - DynamoDB to rate comments (thumbs up or thumbs down)
     - DynamoDB to retrieve nearby comments based on location
     - Lambda body / query string parameters validation including:
         - Missing / null
@@ -37,9 +38,7 @@ A web application built in ReactJS designed to pull weather data for the user ba
     - Improvement of profanity filter (more words)
     - API Gateway rate limiting
     - Terraform to control & manage deployment of AWS resources
-    - Add or remove to thumbs up / thumbs down ratings in DynamoDB
 - More unit & integration tests
-- Pre-commit hook to run integration & unit tests
 - New updated UI
 - Set loading animations when changing location via drop down component 
 - Move 'Is this information accurate' feedback option into 'Should you wear a coat' component
