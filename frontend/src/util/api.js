@@ -56,3 +56,24 @@ export const getNearbyComments = async (latitude, longitude) => {
     throw error;
   }
 };
+
+export const updateCommentVote = async (commentId, voteType) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}comment/rate`,
+      {
+        commentId,
+        voteType, // "up" or "down"
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    return { data: response.data, statusCode: response.status };
+  } catch (error) {
+    console.error("Error updating comment vote", error);
+    return { data: error.response?.data, statusCode: error.response?.status };
+  }
+};
