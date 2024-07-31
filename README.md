@@ -47,6 +47,12 @@ A web application built in ReactJS designed to pull weather data for the user ba
 - Watchman for hot reloading/deployment of local aws services
 - ESLinter for backend/ directory
 - Custom Favicon
+- Sort comments by rating
+- Limit users from multiple ratings of comments
+    - No login system, so this will be done by IP
+    - One user cannot rate a thumb up or down more than once
+    - One user cannot rate both thumb up and thumb down
+    - User cannot rate their own comment(s)
 
 
 ## How to run the app?
