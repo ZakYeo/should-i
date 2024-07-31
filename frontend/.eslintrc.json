@@ -13,25 +13,15 @@
     "eslint:recommended",
     "plugin:jest/recommended"
   ],
-  "plugins": [
-    "react",
-    "prettier",
-    "jest"
-  ],
+  "plugins": ["react", "prettier", "jest"],
   "rules": {
     "prettier/prettier": "error",
     "no-unused-vars": "error",
     "no-console": "off",
     "eqeqeq": "error",
     "curly": "error",
-    "quotes": [
-      "error",
-      "double"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
     "no-undef": "error",
     "no-redeclare": "error"
   },
