@@ -197,7 +197,7 @@ class MyStack extends TerraformStack {
       "CommentSaveMockIntegrationOptions",
       {
         restApiId: api.id,
-        resourceId: commentResource.id,
+        resourceId: commentSaveResource.id,
         httpMethod: commentSaveOptionsMethod.httpMethod,
         type: "MOCK",
         requestTemplates: {
@@ -210,7 +210,7 @@ class MyStack extends TerraformStack {
       "CommentSaveMethodResponse",
       {
         restApiId: api.id,
-        resourceId: commentResource.id,
+        resourceId: commentSaveResource.id,
         httpMethod: commentSaveOptionsIntegration.httpMethod,
         statusCode: "200",
         responseModels: {
@@ -229,7 +229,7 @@ class MyStack extends TerraformStack {
       "CommentSaveMockIntegrationResponseOptions",
       {
         restApiId: api.id,
-        resourceId: commentResource.id,
+        resourceId: commentSaveResource.id,
         httpMethod: commentSaveMethodResponse.httpMethod,
         statusCode: "200",
         responseParameters: {
