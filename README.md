@@ -31,13 +31,18 @@ A web application built in ReactJS designed to pull weather data for the user ba
         - Missing / null
         - Invalid / out of bounds
         - Profanity filter for comments
+- Terraform for deployment of
+    - API Gateway
+    - Lambda Functions
 
 ## Planned Features
 
 - AWS backend:
     - Improvement of profanity filter (more words)
     - API Gateway rate limiting
-    - Terraform to control & manage deployment of AWS resources
+- Terraform of more resources
+    - Missing lambda functions
+    - DynamoDB
 - More unit & integration tests
 - New updated UI
 - Set loading animations when changing location via drop down component 
