@@ -125,7 +125,7 @@ class MyStack extends TerraformStack {
         role: role.arn
       }
     );
-    new aws.lambdaFunction.LambdaFunction(
+    const addThumbUpOrDownLambda = new aws.lambdaFunction.LambdaFunction(
       this,
       `lambda-add-thumb-up-or-down`,
       {
@@ -272,6 +272,126 @@ class MyStack extends TerraformStack {
         restApiId: api.id,
         resourceId: commentSaveResource.id,
         httpMethod: commentSavePostIntegration.httpMethod,
+        statusCode: "200",
+        responseModels: {
+          "application/json": "Empty",
+        },
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": true,
+        },
+      }
+    );
+
+
+    // /comment/rate
+    const commentRateResource = new aws.apiGatewayResource.ApiGatewayResource(
+      this,
+      "CommentRateResource",
+      {
+        restApiId: api.id,
+        parentId: commentResource.id,
+        pathPart: "rate",
+      }
+    );
+
+    new aws.lambdaPermission.LambdaPermission(this, "apigw-lambda-add-thumb-up-or-down", {
+      functionName: addThumbUpOrDownLambda.functionName,
+      action: "lambda:InvokeFunction",
+      principal: "apigateway.amazonaws.com",
+      sourceArn: `${api.executionArn}/*/*`
+    });
+
+    const commentRateOptionsMethod = new aws.apiGatewayMethod.ApiGatewayMethod(
+      this,
+      `CommentRateMethodOPTIONS`,
+      {
+        restApiId: api.id,
+        resourceId: commentRateResource.id,
+        httpMethod: "OPTIONS",
+        authorization: "NONE",
+      }
+    );
+
+    const commentRateOptionsIntegration = new aws.apiGatewayIntegration.ApiGatewayIntegration(
+      this,
+      "CommentRateMockIntegrationOptions",
+      {
+        restApiId: api.id,
+        resourceId: commentRateResource.id,
+        httpMethod: commentRateOptionsMethod.httpMethod,
+        type: "MOCK",
+        requestTemplates: {
+          "application/json": '{"statusCode": 200}',
+        },
+      }
+    );
+    const commentRateMethodResponse = new aws.apiGatewayMethodResponse.ApiGatewayMethodResponse(
+      this,
+      "CommentRateMethodResponse",
+      {
+        restApiId: api.id,
+        resourceId: commentRateResource.id,
+        httpMethod: commentRateOptionsIntegration.httpMethod,
+        statusCode: "200",
+        responseModels: {
+          "application/json": "Empty",
+        },
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": true,
+          "method.response.header.Access-Control-Allow-Methods": true,
+          "method.response.header.Access-Control-Allow-Headers": true,
+        },
+      }
+    );
+
+    new aws.apiGatewayIntegrationResponse.ApiGatewayIntegrationResponse(
+      this,
+      "CommentRateMockIntegrationResponseOptions",
+      {
+        restApiId: api.id,
+        resourceId: commentRateResource.id,
+        httpMethod: commentRateMethodResponse.httpMethod,
+        statusCode: "200",
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": "'*'",
+          "method.response.header.Access-Control-Allow-Methods":
+            "'OPTIONS,POST'",
+        },
+      }
+    );
+
+    const commentRatePostMethod = new aws.apiGatewayMethod.ApiGatewayMethod(
+      this,
+      `CommentRateMethodPost`,
+      {
+        restApiId: api.id,
+        resourceId: commentRateResource.id,
+        httpMethod: "POST",
+        authorization: "NONE",
+        authorizerId: "",
+      }
+    );
+
+    const commentRatePostIntegration = new aws.apiGatewayIntegration.ApiGatewayIntegration(
+      this,
+      "CommentRateIntegrationPost",
+      {
+        restApiId: api.id,
+        resourceId: commentRateResource.id,
+        httpMethod: commentRatePostMethod.httpMethod,
+        type: "AWS_PROXY",
+        integrationHttpMethod: "POST",
+        uri: addThumbUpOrDownLambda.invokeArn,
+      }
+    );
+
+    new aws.apiGatewayMethodResponse.ApiGatewayMethodResponse(
+      this,
+      "CommentRateMethodResponsePost",
+      {
+        restApiId: api.id,
+        resourceId: commentRateResource.id,
+        httpMethod: commentRatePostIntegration.httpMethod,
         statusCode: "200",
         responseModels: {
           "application/json": "Empty",
