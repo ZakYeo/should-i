@@ -26,6 +26,10 @@ class MyStack extends TerraformStack {
     new AwsProvider(this, "AWS", {
       region: "eu-west-2",
     });
+
+
+
+
     // Create lambda executable
     const assetSaveCommentToDB = new TerraformAsset(this, "lambda-asset-save-comment-to-db", {
       path: '../backend/lambda-functions/save-comment-to-db/',
@@ -85,7 +89,7 @@ class MyStack extends TerraformStack {
     });
 
     // Create and deploy lambda resource with code
-    new aws.lambdaFunction.LambdaFunction(
+    const saveCommentLambda = new aws.lambdaFunction.LambdaFunction(
       this,
       `lambda-save-comment-to-db`,
       {
@@ -131,6 +135,150 @@ class MyStack extends TerraformStack {
         handler: `src/handlers/add-thumb-up-or-down.handler`,
         runtime: `nodejs18.x`,
         role: role.arn
+      }
+    );
+
+
+    // Create and configure API gateway
+    const api = new aws.apiGatewayRestApi.ApiGatewayRestApi(
+      this,
+      "zak-api-gateway",
+      {
+        name: `zak-api-gateway`,
+        endpointConfiguration: {
+          types: ["REGIONAL"],
+        },
+      }
+    );
+
+    // /comment
+    const commentResource = new aws.apiGatewayResource.ApiGatewayResource(
+      this,
+      "CommentResource",
+      {
+        restApiId: api.id,
+        parentId: api.rootResourceId,
+        pathPart: "comment",
+      }
+    );
+
+
+    // /comment/save
+    const commentSaveResource = new aws.apiGatewayResource.ApiGatewayResource(
+      this,
+      "CommentSaveResource",
+      {
+        restApiId: api.id,
+        parentId: commentResource.id,
+        pathPart: "save",
+      }
+    );
+
+    new aws.lambdaPermission.LambdaPermission(this, "apigw-lambda", {
+      functionName: saveCommentLambda.functionName,
+      action: "lambda:InvokeFunction",
+      principal: "apigateway.amazonaws.com",
+      sourceArn: `${api.executionArn}/*/*`
+    });
+
+    const commentSaveOptionsMethod = new aws.apiGatewayMethod.ApiGatewayMethod(
+      this,
+      `CommentSaveMethodOPTIONS`,
+      {
+        restApiId: api.id,
+        resourceId: commentSaveResource.id,
+        httpMethod: "OPTIONS",
+        authorization: "NONE",
+      }
+    );
+
+    const commentSaveOptionsIntegration = new aws.apiGatewayIntegration.ApiGatewayIntegration(
+      this,
+      "CommentSaveMockIntegrationOptions",
+      {
+        restApiId: api.id,
+        resourceId: commentResource.id,
+        httpMethod: commentSaveOptionsMethod.httpMethod,
+        type: "MOCK",
+        requestTemplates: {
+          "application/json": '{"statusCode": 200}',
+        },
+      }
+    );
+    const commentSaveMethodResponse = new aws.apiGatewayMethodResponse.ApiGatewayMethodResponse(
+      this,
+      "CommentSaveMethodResponse",
+      {
+        restApiId: api.id,
+        resourceId: commentResource.id,
+        httpMethod: commentSaveOptionsIntegration.httpMethod,
+        statusCode: "200",
+        responseModels: {
+          "application/json": "Empty",
+        },
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": true,
+          "method.response.header.Access-Control-Allow-Methods": true,
+          "method.response.header.Access-Control-Allow-Headers": true,
+        },
+      }
+    );
+
+    new aws.apiGatewayIntegrationResponse.ApiGatewayIntegrationResponse(
+      this,
+      "CommentSaveMockIntegrationResponseOptions",
+      {
+        restApiId: api.id,
+        resourceId: commentResource.id,
+        httpMethod: commentSaveMethodResponse.httpMethod,
+        statusCode: "200",
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": "'*'",
+          "method.response.header.Access-Control-Allow-Methods":
+            "'OPTIONS,POST'",
+        },
+      }
+    );
+
+    const commentSavePostMethod = new aws.apiGatewayMethod.ApiGatewayMethod(
+      this,
+      `CommentSaveMethodPost`,
+      {
+        restApiId: api.id,
+        resourceId: commentSaveResource.id,
+        httpMethod: "POST",
+        authorization: "NONE",
+        authorizerId: "",
+      }
+    );
+
+    const commentSavePostIntegration = new aws.apiGatewayIntegration.ApiGatewayIntegration(
+      this,
+      "CommentSaveIntegrationPost",
+      {
+        restApiId: api.id,
+        resourceId: commentSaveResource.id,
+        httpMethod: commentSavePostMethod.httpMethod,
+        type: "AWS_PROXY",
+        integrationHttpMethod: "POST",
+        uri: saveCommentLambda.invokeArn,
+      }
+    );
+
+    new aws.apiGatewayMethodResponse.ApiGatewayMethodResponse(
+      this,
+      "CommentSaveMethodResponsePost",
+      {
+        restApiId: api.id,
+        resourceId: commentSaveResource.id,
+        httpMethod: commentSavePostIntegration.httpMethod,
+        statusCode: "200",
+        responseModels: {
+          "application/json": "Empty",
+        },
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": true,
+        },
       }
     );
   }
