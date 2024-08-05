@@ -101,7 +101,7 @@ class MyStack extends TerraformStack {
         role: role.arn
       }
     );
-    new aws.lambdaFunction.LambdaFunction(
+    const getNearbyCommentsLambda = new aws.lambdaFunction.LambdaFunction(
       this,
       `lambda-get-nearby-comments`,
       {
@@ -113,7 +113,7 @@ class MyStack extends TerraformStack {
         role: role.arn
       }
     );
-    new aws.lambdaFunction.LambdaFunction(
+    const checkCoatLambda = new aws.lambdaFunction.LambdaFunction(
       this,
       `lambda-check-coat`,
       {
@@ -174,7 +174,7 @@ class MyStack extends TerraformStack {
       }
     );
 
-    new aws.lambdaPermission.LambdaPermission(this, "apigw-lambda", {
+    new aws.lambdaPermission.LambdaPermission(this, "apigw-lambda-save-comment", {
       functionName: saveCommentLambda.functionName,
       action: "lambda:InvokeFunction",
       principal: "apigateway.amazonaws.com",
@@ -392,6 +392,256 @@ class MyStack extends TerraformStack {
         restApiId: api.id,
         resourceId: commentRateResource.id,
         httpMethod: commentRatePostIntegration.httpMethod,
+        statusCode: "200",
+        responseModels: {
+          "application/json": "Empty",
+        },
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": true,
+        },
+      }
+    );
+
+    // /comment/get
+    const commentGetResource = new aws.apiGatewayResource.ApiGatewayResource(
+      this,
+      "CommentGetResource",
+      {
+        restApiId: api.id,
+        parentId: commentResource.id,
+        pathPart: "get",
+      }
+    );
+    // /comment/get/nearby
+    const commentGetNearbyResource = new aws.apiGatewayResource.ApiGatewayResource(
+      this,
+      "CommentGetNearbyResource",
+      {
+        restApiId: api.id,
+        parentId: commentGetResource.id,
+        pathPart: "nearby",
+      }
+    );
+
+    new aws.lambdaPermission.LambdaPermission(this, "apigw-lambda-get-nearby-comments", {
+      functionName: getNearbyCommentsLambda.functionName,
+      action: "lambda:InvokeFunction",
+      principal: "apigateway.amazonaws.com",
+      sourceArn: `${api.executionArn}/*/*`
+    });
+
+    const commentGetNearbyOptionsMethod = new aws.apiGatewayMethod.ApiGatewayMethod(
+      this,
+      `CommentsGetNearbyMethodOPTIONS`,
+      {
+        restApiId: api.id,
+        resourceId: commentGetNearbyResource.id,
+        httpMethod: "OPTIONS",
+        authorization: "NONE",
+      }
+    );
+
+    const getNearbyCommentsOptionsIntegration = new aws.apiGatewayIntegration.ApiGatewayIntegration(
+      this,
+      "GetNearbyCommentsMockIntegrationOptions",
+      {
+        restApiId: api.id,
+        resourceId: commentGetNearbyResource.id,
+        httpMethod: commentGetNearbyOptionsMethod.httpMethod,
+        type: "MOCK",
+        requestTemplates: {
+          "application/json": '{"statusCode": 200}',
+        },
+      }
+    );
+    const getNearbyCommentsMethodResponse = new aws.apiGatewayMethodResponse.ApiGatewayMethodResponse(
+      this,
+      "GetNearbyCommentsMethodResponse",
+      {
+        restApiId: api.id,
+        resourceId: commentGetNearbyResource.id,
+        httpMethod: getNearbyCommentsOptionsIntegration.httpMethod,
+        statusCode: "200",
+        responseModels: {
+          "application/json": "Empty",
+        },
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": true,
+          "method.response.header.Access-Control-Allow-Methods": true,
+          "method.response.header.Access-Control-Allow-Headers": true,
+        },
+      }
+    );
+
+    new aws.apiGatewayIntegrationResponse.ApiGatewayIntegrationResponse(
+      this,
+      "GetNearbyCommentsMockIntegrationResponseOptions",
+      {
+        restApiId: api.id,
+        resourceId: commentGetNearbyResource.id,
+        httpMethod: getNearbyCommentsMethodResponse.httpMethod,
+        statusCode: "200",
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": "'*'",
+          "method.response.header.Access-Control-Allow-Methods":
+            "'OPTIONS,GET'",
+        },
+      }
+    );
+
+    const getNearbyCommentsGetMethod = new aws.apiGatewayMethod.ApiGatewayMethod(
+      this,
+      `GetNearbyCommentsMethodPost`,
+      {
+        restApiId: api.id,
+        resourceId: commentGetNearbyResource.id,
+        httpMethod: "GET",
+        authorization: "NONE",
+        authorizerId: "",
+      }
+    );
+
+    const getNearbyCommentsGetIntegration = new aws.apiGatewayIntegration.ApiGatewayIntegration(
+      this,
+      "GetNearbyCommentsIntegrationPost",
+      {
+        restApiId: api.id,
+        resourceId: commentGetNearbyResource.id,
+        httpMethod: getNearbyCommentsGetMethod.httpMethod,
+        type: "AWS_PROXY",
+        integrationHttpMethod: "GET",
+        uri: checkCoatLambda.invokeArn,
+      }
+    );
+
+    new aws.apiGatewayMethodResponse.ApiGatewayMethodResponse(
+      this,
+      "GetNearbyCommentsMethodResponsePost",
+      {
+        restApiId: api.id,
+        resourceId: commentGetNearbyResource.id,
+        httpMethod: getNearbyCommentsGetIntegration.httpMethod,
+        statusCode: "200",
+        responseModels: {
+          "application/json": "Empty",
+        },
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": true,
+        },
+      }
+    );
+
+
+
+    // /check-coat
+    const checkCoatResource = new aws.apiGatewayResource.ApiGatewayResource(
+      this,
+      "CheckCoatResource",
+      {
+        restApiId: api.id,
+        parentId: api.rootResourceId,
+        pathPart: "check-coat",
+      }
+    );
+
+    new aws.lambdaPermission.LambdaPermission(this, "apigw-lambda-check-coat", {
+      functionName: checkCoatLambda.functionName,
+      action: "lambda:InvokeFunction",
+      principal: "apigateway.amazonaws.com",
+      sourceArn: `${api.executionArn}/*/*`
+    });
+
+    const checkCoatOptionsMethod = new aws.apiGatewayMethod.ApiGatewayMethod(
+      this,
+      `CheckCoatMethodOPTIONS`,
+      {
+        restApiId: api.id,
+        resourceId: checkCoatResource.id,
+        httpMethod: "OPTIONS",
+        authorization: "NONE",
+      }
+    );
+
+    const checkCoatOptionsIntegration = new aws.apiGatewayIntegration.ApiGatewayIntegration(
+      this,
+      "CheckCoatMockIntegrationOptions",
+      {
+        restApiId: api.id,
+        resourceId: checkCoatResource.id,
+        httpMethod: checkCoatOptionsMethod.httpMethod,
+        type: "MOCK",
+        requestTemplates: {
+          "application/json": '{"statusCode": 200}',
+        },
+      }
+    );
+    const checkCoatMethodResponse = new aws.apiGatewayMethodResponse.ApiGatewayMethodResponse(
+      this,
+      "CheckCoatMethodResponse",
+      {
+        restApiId: api.id,
+        resourceId: checkCoatResource.id,
+        httpMethod: checkCoatOptionsIntegration.httpMethod,
+        statusCode: "200",
+        responseModels: {
+          "application/json": "Empty",
+        },
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": true,
+          "method.response.header.Access-Control-Allow-Methods": true,
+          "method.response.header.Access-Control-Allow-Headers": true,
+        },
+      }
+    );
+
+    new aws.apiGatewayIntegrationResponse.ApiGatewayIntegrationResponse(
+      this,
+      "CheckCoatMockIntegrationResponseOptions",
+      {
+        restApiId: api.id,
+        resourceId: checkCoatResource.id,
+        httpMethod: checkCoatMethodResponse.httpMethod,
+        statusCode: "200",
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Origin": "'*'",
+          "method.response.header.Access-Control-Allow-Methods":
+            "'OPTIONS,GET'",
+        },
+      }
+    );
+
+    const checkCoatGetMethod = new aws.apiGatewayMethod.ApiGatewayMethod(
+      this,
+      `CheckCoatMethodPost`,
+      {
+        restApiId: api.id,
+        resourceId: checkCoatResource.id,
+        httpMethod: "GET",
+        authorization: "NONE",
+        authorizerId: "",
+      }
+    );
+
+    const checkCoatGetIntegration = new aws.apiGatewayIntegration.ApiGatewayIntegration(
+      this,
+      "CheckCoatIntegrationPost",
+      {
+        restApiId: api.id,
+        resourceId: checkCoatResource.id,
+        httpMethod: checkCoatGetMethod.httpMethod,
+        type: "AWS_PROXY",
+        integrationHttpMethod: "GET",
+        uri: checkCoatLambda.invokeArn,
+      }
+    );
+
+    new aws.apiGatewayMethodResponse.ApiGatewayMethodResponse(
+      this,
+      "CheckCoatMethodResponsePost",
+      {
+        restApiId: api.id,
+        resourceId: checkCoatResource.id,
+        httpMethod: checkCoatGetIntegration.httpMethod,
         statusCode: "200",
         responseModels: {
           "application/json": "Empty",
