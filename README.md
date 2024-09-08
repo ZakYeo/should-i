@@ -63,11 +63,25 @@ A web application built in ReactJS designed to pull weather data for the user ba
 ## How to run the app?
 
 - Make sure you have docker running in the background
-- Run `./deploy-local-aws.sh` in `backend/` to deploy AWS backend
-- Run `npm start` in `frontend/` to deploy ReactJS web app frontend
+- Create a file `env.json` and add the following:
+```
+{
+  "CheckCoat": {
+    "API_KEY": ""
+  }
+}
+```
+- Add your api key from https://home.openweathermap.org/ as the value
+- Run `./deploy-local-aws.sh` in `backend/` to deploy AWS backend (you must have the AWS CLI installed)
 - Download the local DynamoDB files from [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html) and extract the folder
 - Place the folder in ./backend
-- Startup local dynamoDB server by running `./deploy-local-dynamodb.sh && ./deploy-local-dynamodb-tables` (assuming you have a local instance of dynamoDB downloaded in that directory in a folder named dynamodb_local_latest)
+- Startup local dynamoDB server by running `./deploy-local-dynamodb.sh` (assuming you have a local instance of dynamoDB downloaded in that directory in a folder named dynamodb_local_latest & java installed)
+- Now deploy the necessary DynamoDB tables via `./deploy-local-dynamodb-tables.sh` (ensure dynamoDB is already running)
+- Create a .env file in ./src/ and add the following variable(s)
+- `REACT_APP_GOOGLE_MAPS_API_KEY=`
+- Make sure you grab your own google maps api key from Google
+- Now run `npm i && npm start` in `frontend/` to deploy ReactJS web app frontend
+
 
 ## App Screenshots
 
