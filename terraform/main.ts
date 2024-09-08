@@ -2,6 +2,7 @@ import { Construct } from "constructs";
 import * as aws from "@cdktf/provider-aws";
 
 import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
+import { DynamodbTable } from "@cdktf/provider-aws/lib/dynamodb-table";
 import { App, TerraformStack, AssetType, TerraformAsset } from "cdktf";
 
 
@@ -25,6 +26,21 @@ class MyStack extends TerraformStack {
 
     new AwsProvider(this, "AWS", {
       region: "eu-west-2",
+    });
+
+    new DynamodbTable(this, "CommentsTable", {
+      name: 'Comments',
+      hashKey: 'CommentId',
+      billingMode: 'PAY_PER_REQUEST',
+      attribute: [
+        { name: 'CommentId', type: 'S' },
+        { name: 'Geohash', type: 'S' }
+      ],
+      globalSecondaryIndex: [{
+        name: "GeohashIndex",
+        hashKey: 'Geohash',
+        projectionType: 'ALL'
+      }]
     });
 
 

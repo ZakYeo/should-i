@@ -41,7 +41,6 @@ A web application built in ReactJS designed to pull weather data for the user ba
     - Improvement of profanity filter (more words)
     - API Gateway rate limiting
 - Terraform of more resources
-    - Missing lambda functions
     - DynamoDB
 - More unit & integration tests
 - New updated UI
