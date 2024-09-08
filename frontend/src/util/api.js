@@ -1,11 +1,9 @@
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL;
-
 export const checkCoat = async (latitude, longitude) => {
   try {
     const response = await axios.get(
-      `${API_URL}check-coat?lat=${latitude}&lon=${longitude}`,
+      `check-coat?lat=${latitude}&lon=${longitude}`,
     );
     return response.data;
   } catch (error) {
@@ -22,7 +20,7 @@ export const saveCommentToDB = async (
 ) => {
   try {
     const response = await axios.post(
-      `${API_URL}comment/save`,
+      "comment/save",
       {
         userName,
         commentDescription,
@@ -44,7 +42,7 @@ export const saveCommentToDB = async (
 
 export const getNearbyComments = async (latitude, longitude) => {
   try {
-    const response = await axios.get(`${API_URL}comment/get/nearby`, {
+    const response = await axios.get("comment/get/nearby", {
       params: {
         lat: latitude,
         lon: longitude,
@@ -60,7 +58,7 @@ export const getNearbyComments = async (latitude, longitude) => {
 export const updateCommentVote = async (commentId, voteType) => {
   try {
     const response = await axios.post(
-      `${API_URL}comment/rate`,
+      "comment/rate",
       {
         commentId,
         voteType, // "up" or "down"
