@@ -64,10 +64,32 @@ class MyStack extends TerraformStack {
       type: AssetType.ARCHIVE,
     });
 
+    // Create frontend asset
+    const reactAppAsset = new TerraformAsset(this, "react-app-asset", {
+      path: "../frontend/build",
+      type: AssetType.ARCHIVE
+    });
+
     // Create bucket to store lambdas
     const lambdaBucket = new aws.s3Bucket.S3Bucket(this, `lambda-bucket`, {
       bucket: `zak-lambda-bucket`,
       tags: {},
+    });
+
+    // Bucket to serve frontend
+    const reactAppBucket = new aws.s3Bucket.S3Bucket(this, "react-app-bucket", {
+      bucket: "zak-should-i",
+      website: {
+        indexDocument: "index.html",
+        errorDocument: "error.html"
+      }
+    });
+
+    // Upload the zipped React app to S3
+    new aws.s3Object.S3Object(this, "react-app-archive", {
+      bucket: reactAppBucket.bucket,
+      key: "should-i.zip",
+      source: reactAppAsset.path
     });
 
     // Upload lambda zip file to lambda store on s3
