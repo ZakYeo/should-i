@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@cdktf/provider-aws": "^18.1.0",
+    "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.4",
     "cdktf": "^0.19.2",

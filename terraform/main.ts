@@ -4,7 +4,8 @@ import * as aws from "@cdktf/provider-aws";
 import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
 import { DynamodbTable } from "@cdktf/provider-aws/lib/dynamodb-table";
 import { App, TerraformStack, AssetType, TerraformAsset } from "cdktf";
-
+import * as path from 'path';
+import * as glob from 'glob';
 
 const lambdaRolePolicy = {
   "Version": "2012-10-17",
@@ -64,12 +65,6 @@ class MyStack extends TerraformStack {
       type: AssetType.ARCHIVE,
     });
 
-    // Create frontend asset
-    const reactAppAsset = new TerraformAsset(this, "react-app-asset", {
-      path: "../frontend/build",
-      type: AssetType.ARCHIVE
-    });
-
     // Create bucket to store lambdas
     const lambdaBucket = new aws.s3Bucket.S3Bucket(this, `lambda-bucket`, {
       bucket: `zak-lambda-bucket`,
@@ -85,11 +80,19 @@ class MyStack extends TerraformStack {
       }
     });
 
-    // Upload the zipped React app to S3
-    new aws.s3Object.S3Object(this, "react-app-archive", {
-      bucket: reactAppBucket.bucket,
-      key: "should-i.zip",
-      source: reactAppAsset.path
+    // Path to the build directory
+    const buildDir: string = path.resolve(__dirname, "../frontend/build");
+
+    // Use glob to find all files recursively, including subdirectories
+    const files: string[] = glob.sync("**/*", { cwd: buildDir, nodir: true });
+
+    // Upload each file, maintaining the relative path as the S3 key
+    files.forEach((file: string) => {
+      new aws.s3Object.S3Object(this, `react-app-file-${file.replace(/\//g, '-')}`, {
+        bucket: reactAppBucket.bucket,
+        key: file, // Use relative path as the S3 key to maintain folder structure
+        source: path.join(buildDir, file) // Full path to the file
+      });
     });
 
     // Upload lambda zip file to lambda store on s3
