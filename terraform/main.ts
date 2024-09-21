@@ -3,9 +3,10 @@ import * as aws from "@cdktf/provider-aws";
 
 import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
 import { DynamodbTable } from "@cdktf/provider-aws/lib/dynamodb-table";
-import { App, TerraformStack, AssetType, TerraformAsset } from "cdktf";
+import { App, TerraformStack, AssetType, TerraformAsset, TerraformOutput } from "cdktf";
 import * as path from 'path';
 import * as glob from 'glob';
+import * as mime from 'mime-types';
 
 const lambdaRolePolicy = {
   "Version": "2012-10-17",
@@ -74,10 +75,50 @@ class MyStack extends TerraformStack {
     // Bucket to serve frontend
     const reactAppBucket = new aws.s3Bucket.S3Bucket(this, "react-app-bucket", {
       bucket: "zak-should-i",
-      website: {
-        indexDocument: "index.html",
-        errorDocument: "error.html"
+    });
+
+    new aws.s3BucketWebsiteConfiguration.S3BucketWebsiteConfiguration(this, "react-app-bucket-website-configuration", {
+      bucket: reactAppBucket.id,
+      indexDocument: {
+        suffix: "index.html"
+      },
+      errorDocument: {
+        key: "index.html" // Redirect errors to index.html for client-side routing
       }
+    });
+
+    // Set ownership controls
+    new aws.s3BucketOwnershipControls.S3BucketOwnershipControls(this, "react-app-bucket-ownership", {
+      bucket: reactAppBucket.bucket,
+      rule: {
+        objectOwnership: "BucketOwnerEnforced"
+      }
+    });
+
+    // Set public access to serve react app as a frontend from s3
+    const publicAccessBlock = new aws.s3BucketPublicAccessBlock.S3BucketPublicAccessBlock(this, "react-app-bucket-public-access", {
+      bucket: reactAppBucket.bucket,
+      blockPublicAcls: false,
+      blockPublicPolicy: false,
+      ignorePublicAcls: false,
+      restrictPublicBuckets: false
+    });
+
+    new aws.s3BucketPolicy.S3BucketPolicy(this, "react-app-bucket-policy", {
+      bucket: reactAppBucket.bucket,
+      policy: JSON.stringify({
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Sid: "PublicReadGetObject",
+            Effect: "Allow",
+            Principal: "*",
+            Action: "s3:GetObject",
+            Resource: `arn:aws:s3:::${reactAppBucket.bucket}/*`
+          }
+        ]
+      }),
+      dependsOn: [publicAccessBlock]
     });
 
     // Path to the build directory
@@ -88,11 +129,22 @@ class MyStack extends TerraformStack {
 
     // Upload each file, maintaining the relative path as the S3 key
     files.forEach((file: string) => {
+      const filePath = path.join(buildDir, file);
+      const contentType = mime.lookup(file) || 'application/octet-stream';
+
       new aws.s3Object.S3Object(this, `react-app-file-${file.replace(/\//g, '-')}`, {
         bucket: reactAppBucket.bucket,
         key: file, // Use relative path as the S3 key to maintain folder structure
-        source: path.join(buildDir, file) // Full path to the file
+        source: filePath,
+        contentType: contentType,
+        acl: undefined
       });
+    });
+
+    // Output the S3 Website URL
+    new TerraformOutput(this, "bucket_website_url", {
+      value: reactAppBucket.websiteEndpoint,
+      description: "Public URL for the S3 bucket to access the React app"
     });
 
     // Upload lambda zip file to lambda store on s3
