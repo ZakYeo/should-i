@@ -83,7 +83,7 @@ class MyStack extends TerraformStack {
         suffix: "index.html"
       },
       errorDocument: {
-        key: "index.html" // Redirect errors to index.html for client-side routing
+        key: "index.html"
       }
     });
 
@@ -91,7 +91,7 @@ class MyStack extends TerraformStack {
     new aws.s3BucketOwnershipControls.S3BucketOwnershipControls(this, "react-app-bucket-ownership", {
       bucket: reactAppBucket.bucket,
       rule: {
-        objectOwnership: "BucketOwnerEnforced"
+        objectOwnership: "BucketOwnerPreferred"
       }
     });
 
@@ -104,6 +104,11 @@ class MyStack extends TerraformStack {
       restrictPublicBuckets: false
     });
 
+
+    const originAccessIdentity = new aws.cloudfrontOriginAccessIdentity.CloudfrontOriginAccessIdentity(this, 'OAI', {
+      comment: 'OAI for accessing S3 bucket',
+    });
+
     new aws.s3BucketPolicy.S3BucketPolicy(this, "react-app-bucket-policy", {
       bucket: reactAppBucket.bucket,
       policy: JSON.stringify({
@@ -112,19 +117,70 @@ class MyStack extends TerraformStack {
           {
             Sid: "PublicReadGetObject",
             Effect: "Allow",
-            Principal: "*",
+            Principal: {
+              AWS: originAccessIdentity.iamArn // Ensure CloudFront OAI can access the bucket
+            },
             Action: "s3:GetObject",
-            Resource: `arn:aws:s3:::${reactAppBucket.bucket}/*`
+            Resource: `arn:aws:s3:::${reactAppBucket.bucket}/*`,
           }
         ]
       }),
       dependsOn: [publicAccessBlock]
     });
 
-    // Path to the build directory
-    const buildDir: string = path.resolve(__dirname, "../frontend/build");
+    const s3OriginId = "react-app-s3-origin";
 
-    // Use glob to find all files recursively, including subdirectories
+
+    // Create CloudFront distribution for HTTPS
+    const cloudfrontDistribution = new aws.cloudfrontDistribution.CloudfrontDistribution(this, "react-app-cloudfront", {
+      origin: [
+        {
+          domainName: `${reactAppBucket.bucketRegionalDomainName}`,
+          originId: s3OriginId,
+          s3OriginConfig: {
+            originAccessIdentity: originAccessIdentity.cloudfrontAccessIdentityPath,
+          }
+        }
+      ],
+      enabled: true,
+      isIpv6Enabled: true,
+      defaultRootObject: "index.html",
+      defaultCacheBehavior: {
+        allowedMethods: ["GET", "HEAD"],
+        cachedMethods: ["GET", "HEAD"],
+        targetOriginId: s3OriginId,
+        forwardedValues: {
+          queryString: false,
+          cookies: {
+            forward: "none"
+          }
+        },
+        viewerProtocolPolicy: "redirect-to-https", // Enforce HTTPS
+        minTtl: 0,
+        defaultTtl: 3600,
+        maxTtl: 86400
+      },
+      priceClass: "PriceClass_100",
+      restrictions: {
+        geoRestriction: {
+          restrictionType: "none"
+        }
+      },
+      viewerCertificate: {
+        cloudfrontDefaultCertificate: true,
+        minimumProtocolVersion: "TLSv1.2_2021"
+      },
+      tags: {
+        Environment: "Production"
+      }
+    });
+
+    // Add CloudFront URL to Terraform output
+    new TerraformOutput(this, "cloudfront-url", {
+      value: cloudfrontDistribution.domainName,
+    });
+
+    const buildDir: string = path.resolve(__dirname, "../frontend/build");
     const files: string[] = glob.sync("**/*", { cwd: buildDir, nodir: true });
 
     // Upload each file, maintaining the relative path as the S3 key
@@ -141,7 +197,6 @@ class MyStack extends TerraformStack {
       });
     });
 
-    // Output the S3 Website URL
     new TerraformOutput(this, "bucket_website_url", {
       value: reactAppBucket.websiteEndpoint,
       description: "Public URL for the S3 bucket to access the React app"
