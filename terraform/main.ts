@@ -28,6 +28,7 @@ class MyStack extends TerraformStack {
 
     new AwsProvider(this, "AWS", {
       region: "eu-west-2",
+      //profile: "zak-personal"
     });
 
     new DynamodbTable(this, "CommentsTable", {
@@ -77,14 +78,48 @@ class MyStack extends TerraformStack {
       bucket: "zak-should-i",
     });
 
-    new aws.s3BucketWebsiteConfiguration.S3BucketWebsiteConfiguration(this, "react-app-bucket-website-configuration", {
-      bucket: reactAppBucket.id,
-      indexDocument: {
-        suffix: "index.html"
+    const originAccessIdentity = new aws.cloudfrontOriginAccessIdentity.CloudfrontOriginAccessIdentity(this, "OriginAccessIdentity", {
+      comment: "OAI for zak-should-i bucket",
+    });
+
+    // Step 2: Create CloudFront distribution for the S3 bucket with OAI
+    const cloudFrontDistribution = new aws.cloudfrontDistribution.CloudfrontDistribution(this, "CloudFrontDistribution", {
+      origin: [{
+        domainName: `${reactAppBucket.bucketRegionalDomainName}`,
+        originId: "s3-origin",
+        s3OriginConfig: {
+          originAccessIdentity: originAccessIdentity.cloudfrontAccessIdentityPath // Link OAI to the distribution
+        }
+      }],
+      enabled: true,
+      defaultCacheBehavior: {
+        allowedMethods: ["GET", "HEAD"],
+        cachedMethods: ["GET", "HEAD"],
+        targetOriginId: "s3-origin",
+        viewerProtocolPolicy: "redirect-to-https", // Forces HTTPS
+        forwardedValues: {
+          queryString: false,
+          cookies: { forward: "none" }
+        }
       },
-      errorDocument: {
-        key: "index.html" // Redirect errors to index.html for client-side routing
-      }
+      viewerCertificate: {
+        cloudfrontDefaultCertificate: true // Use default CloudFront certificate
+      },
+      restrictions: {
+        geoRestriction: { restrictionType: "none" }
+      },
+      customErrorResponse: [
+        {
+          errorCode: 403,
+          responseCode: 200,
+          responsePagePath: "/index.html"
+        },
+        {
+          errorCode: 404,
+          responseCode: 200,
+          responsePagePath: "/index.html"
+        }
+      ]
     });
 
     // Set ownership controls
@@ -95,14 +130,6 @@ class MyStack extends TerraformStack {
       }
     });
 
-    // Set public access to serve react app as a frontend from s3
-    const publicAccessBlock = new aws.s3BucketPublicAccessBlock.S3BucketPublicAccessBlock(this, "react-app-bucket-public-access", {
-      bucket: reactAppBucket.bucket,
-      blockPublicAcls: false,
-      blockPublicPolicy: false,
-      ignorePublicAcls: false,
-      restrictPublicBuckets: false
-    });
 
     new aws.s3BucketPolicy.S3BucketPolicy(this, "react-app-bucket-policy", {
       bucket: reactAppBucket.bucket,
@@ -110,15 +137,22 @@ class MyStack extends TerraformStack {
         Version: "2012-10-17",
         Statement: [
           {
-            Sid: "PublicReadGetObject",
+            Sid: "AllowCloudFrontAccess",
             Effect: "Allow",
-            Principal: "*",
+            Principal: {
+              "CanonicalUser": originAccessIdentity.s3CanonicalUserId
+            },
             Action: "s3:GetObject",
             Resource: `arn:aws:s3:::${reactAppBucket.bucket}/*`
           }
         ]
-      }),
-      dependsOn: [publicAccessBlock]
+      })
+    });
+
+    // Output the CloudFront URL
+    new TerraformOutput(this, "cloudfront_url", {
+      value: cloudFrontDistribution.domainName,
+      description: "HTTPS URL for the React app served from CloudFront"
     });
 
     // Path to the build directory
