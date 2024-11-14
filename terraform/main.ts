@@ -7,6 +7,10 @@ import { App, TerraformStack, AssetType, TerraformAsset, TerraformOutput } from 
 import * as path from 'path';
 import * as glob from 'glob';
 import * as mime from 'mime-types';
+import * as dotenv from "dotenv"
+
+
+dotenv.config()
 
 const lambdaRolePolicy = {
   "Version": "2012-10-17",
@@ -28,7 +32,7 @@ class MyStack extends TerraformStack {
 
     new AwsProvider(this, "AWS", {
       region: "eu-west-2",
-      //profile: "zak-personal"
+      profile: process.env.profile
     });
 
     new DynamodbTable(this, "CommentsTable", {
