@@ -86,46 +86,6 @@ class MyStack extends TerraformStack {
       comment: "OAI for zak-should-i bucket",
     });
 
-    // Step 2: Create CloudFront distribution for the S3 bucket with OAI
-    const cloudFrontDistribution = new aws.cloudfrontDistribution.CloudfrontDistribution(this, "CloudFrontDistribution", {
-      origin: [{
-        domainName: `${reactAppBucket.bucketRegionalDomainName}`,
-        originId: "s3-origin",
-        s3OriginConfig: {
-          originAccessIdentity: originAccessIdentity.cloudfrontAccessIdentityPath // Link OAI to the distribution
-        }
-      }],
-      enabled: true,
-      defaultCacheBehavior: {
-        allowedMethods: ["GET", "HEAD"],
-        cachedMethods: ["GET", "HEAD"],
-        targetOriginId: "s3-origin",
-        viewerProtocolPolicy: "redirect-to-https", // Forces HTTPS
-        forwardedValues: {
-          queryString: false,
-          cookies: { forward: "none" }
-        }
-      },
-      viewerCertificate: {
-        cloudfrontDefaultCertificate: true // Use default CloudFront certificate
-      },
-      restrictions: {
-        geoRestriction: { restrictionType: "none" }
-      },
-      customErrorResponse: [
-        {
-          errorCode: 403,
-          responseCode: 200,
-          responsePagePath: "/index.html"
-        },
-        {
-          errorCode: 404,
-          responseCode: 200,
-          responsePagePath: "/index.html"
-        }
-      ]
-    });
-
     // Set ownership controls
     new aws.s3BucketOwnershipControls.S3BucketOwnershipControls(this, "react-app-bucket-ownership", {
       bucket: reactAppBucket.bucket,
@@ -153,11 +113,6 @@ class MyStack extends TerraformStack {
       })
     });
 
-    // Output the CloudFront URL
-    new TerraformOutput(this, "cloudfront_url", {
-      value: cloudFrontDistribution.domainName,
-      description: "HTTPS URL for the React app served from CloudFront"
-    });
 
     // Path to the build directory
     const buildDir: string = path.resolve(__dirname, "../frontend/build");
@@ -169,6 +124,8 @@ class MyStack extends TerraformStack {
     files.forEach((file: string) => {
       const filePath = path.join(buildDir, file);
       const contentType = mime.lookup(file) || 'application/octet-stream';
+
+      console.log(`Uploading ${file} with content type ${contentType}`);
 
       new aws.s3Object.S3Object(this, `react-app-file-${file.replace(/\//g, '-')}`, {
         bucket: reactAppBucket.bucket,
@@ -286,6 +243,95 @@ class MyStack extends TerraformStack {
         },
       }
     );
+
+    // Create API Gateway Deployment
+    const deployment = new aws.apiGatewayDeployment.ApiGatewayDeployment(this, 'APIGatewayDeployment', {
+      restApiId: api.id,
+      triggers: {
+        redeployment: new Date().toISOString(), // Forces a new deployment on changes
+      },
+    });
+
+    // Create API Gateway Stage
+    const stage = new aws.apiGatewayStage.ApiGatewayStage(this, 'APIGatewayStage', {
+      restApiId: api.id,
+      deploymentId: deployment.id,
+      stageName: 'prod', // You can name this as needed
+    });
+
+    const cloudFrontDistribution = new aws.cloudfrontDistribution.CloudfrontDistribution(this, "CloudFrontDistribution", {
+      origin: [
+        {
+          domainName: `${reactAppBucket.bucketRegionalDomainName}`,
+          originId: "s3-origin",
+          s3OriginConfig: {
+            originAccessIdentity: originAccessIdentity.cloudfrontAccessIdentityPath,
+          },
+        },
+        {
+          domainName: `${api.id}.execute-api.eu-west-2.amazonaws.com`,
+          originId: "api-origin",
+          originPath: `/${stage.stageName}`,
+          customOriginConfig: {
+            originProtocolPolicy: "https-only",
+            httpPort: 80,
+            httpsPort: 443,
+            originSslProtocols: ["TLSv1.2"],
+          },
+        },
+      ],
+      defaultRootObject: "index.html",
+      enabled: true,
+      defaultCacheBehavior: {
+        targetOriginId: "s3-origin",
+        viewerProtocolPolicy: "redirect-to-https",
+        allowedMethods: ["GET", "HEAD"],
+        cachedMethods: ["GET", "HEAD"],
+        forwardedValues: {
+          queryString: true,
+          cookies: { forward: "none" },
+        },
+      },
+      orderedCacheBehavior: [
+        {
+          pathPattern: "/check-coat*",
+          targetOriginId: "api-origin",
+          viewerProtocolPolicy: "redirect-to-https",
+          allowedMethods: ["GET", "HEAD", "OPTIONS"],
+          cachedMethods: ["GET", "HEAD"],
+          forwardedValues: {
+            queryString: true,
+            headers: ["Authorization"],
+            cookies: { forward: "none" },
+          },
+        },
+      ],
+      viewerCertificate: {
+        cloudfrontDefaultCertificate: true,
+      },
+      restrictions: {
+        geoRestriction: { restrictionType: "none" },
+      },
+      customErrorResponse: [
+        {
+          errorCode: 403,
+          responseCode: 200,
+          responsePagePath: "/index.html",
+        },
+        {
+          errorCode: 404,
+          responseCode: 200,
+          responsePagePath: "/index.html",
+        },
+      ],
+    });
+
+
+    // Output the CloudFront URL
+    new TerraformOutput(this, "cloudfront_url", {
+      value: cloudFrontDistribution.domainName,
+      description: "HTTPS URL for the React app served from CloudFront"
+    });
 
     // /comment
     const commentResource = new aws.apiGatewayResource.ApiGatewayResource(
