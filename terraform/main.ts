@@ -253,7 +253,12 @@ class MyStack extends TerraformStack {
         s3Key: `check-coat/${assetCheckCoat.fileName}`,
         handler: `src/handlers/check-coat.handler`,
         runtime: `nodejs18.x`,
-        role: role.arn
+        role: role.arn,
+        environment: {
+          variables: {
+            "API_KEY": process.env.weatherapikey || "undefined"
+          }
+        }
       }
     );
     const addThumbUpOrDownLambda = new aws.lambdaFunction.LambdaFunction(
