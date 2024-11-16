@@ -5,7 +5,13 @@ Globals:
   Function:
     Timeout: 10
 
+Parameters:
+  CHECK_COAT_API:
+    Type: String
+    Description: "API key for authentication"
+
 Resources:
+
   ShouldIAPI:
     Type: AWS::Serverless::Api
     Properties:
@@ -28,7 +34,9 @@ Resources:
                   description: "200 response"
               x-amazon-apigateway-integration:
                 uri:
-                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations
+                  Fn::Sub:
+                    - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations"
+                    - { FunctionArn: !GetAtt CheckCoat.Arn }
                 responses:
                   default:
                     statusCode: "200"
@@ -44,7 +52,7 @@ Resources:
                 description: "200 response"
             x-amazon-apigateway-integration:
               uri:
-                Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations
+                Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SaveCommentToDB.Arn}/invocations
               responses:
                 default:
                   statusCode: "200"
@@ -60,7 +68,7 @@ Resources:
                 description: "200 response"
             x-amazon-apigateway-integration:
               uri:
-                Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations
+                Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetNearbyComments.Arn}/invocations
               responses:
                 default:
                   statusCode: "200"
@@ -76,7 +84,7 @@ Resources:
                 description: "200 response"
             x-amazon-apigateway-integration:
               uri:
-                Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations
+                Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AddThumbUpOrDown.Arn}/invocations
               responses:
                 default:
                   statusCode: "200"
@@ -123,7 +131,7 @@ Resources:
               Ref: ShouldIAPI 
       Environment:
         Variables:
-          API_KEY: !Ref API_KEY
+          API_KEY: !Ref CHECK_COAT_API
   SaveCommentToDB:
     Type: AWS::Serverless::Function 
     Properties:
@@ -167,7 +175,8 @@ Resources:
             RestApiId:
               Ref: ShouldIAPI 
 
+
 Outputs:
   ApiURL:
     Description: "API endpoint URL for Prod stage"
-    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+    Value: !Sub "https://${ShouldIAPI}.execute-api.${AWS::Region}.amazonaws.com/prod/"
