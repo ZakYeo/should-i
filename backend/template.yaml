@@ -176,6 +176,31 @@ Resources:
               Ref: ShouldIAPI 
 
 
+  ReactAppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: should-i-web-app
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+
+  ReactAppBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ReactAppBucket
+      PolicyDocument:
+        Statement:
+          - Action: "s3:GetObject"
+            Effect: "Allow"
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:aws:s3:::"
+                  - Ref: ReactAppBucket
+                  - "/*"
+            Principal: "*"
 Outputs:
   ApiURL:
     Description: "API endpoint URL for Prod stage"
