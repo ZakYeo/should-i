@@ -28,7 +28,7 @@ export const saveCommentToDB = async (
 ) => {
   try {
     const response = await axios.post(
-      "comment/save",
+      `${baseUrl}comment/save`,
       {
         userName,
         commentDescription,
@@ -50,7 +50,7 @@ export const saveCommentToDB = async (
 
 export const getNearbyComments = async (latitude, longitude) => {
   try {
-    const response = await axios.get("comment/get/nearby", {
+    const response = await axios.get(`${baseUrl}comment/get/nearby`, {
       params: {
         lat: latitude,
         lon: longitude,
@@ -66,7 +66,7 @@ export const getNearbyComments = async (latitude, longitude) => {
 export const updateCommentVote = async (commentId, voteType) => {
   try {
     const response = await axios.post(
-      "comment/rate",
+      `${baseUrl}comment/rate`,
       {
         commentId,
         voteType, // "up" or "down"
