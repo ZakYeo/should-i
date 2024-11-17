@@ -5,7 +5,7 @@ import geohash from 'ngeohash';
 const isLocal = true;
 // command sam local start-api starts aws resources in a docker container, so use this endpoint
 // So lambda knows to point to localhost of the machine, as localhost:8000 will point to localhost of the docker
-const localEndpoint = "http://host.docker.internal:8000";
+const localEndpoint = "http://host.docker.internal:4566";
 const LATITUDE_MINIMUM = -90;
 const LATITUDE_MAXIMUM = 90;
 const LONGITUDE_MINIMUM = -180;
