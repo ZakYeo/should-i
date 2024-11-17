@@ -1,9 +1,17 @@
 import axios from "axios";
 
+let baseUrl = "";
+if (process.env.REACT_APP_BASE_URL) {
+  // By default, leaving a blank base url will automatically pre-pend the
+  // domain name to React
+  // By setting REACT_APP_BASE_URL, you change the domain of the API Gateway
+  baseUrl = `${process.env.REACT_APP_BASE_URL}/`;
+}
+
 export const checkCoat = async (latitude, longitude) => {
   try {
     const response = await axios.get(
-      `check-coat?lat=${latitude}&lon=${longitude}`,
+      `${baseUrl}check-coat?lat=${latitude}&lon=${longitude}`,
     );
     return response.data;
   } catch (error) {
