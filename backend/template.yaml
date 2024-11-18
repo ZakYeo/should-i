@@ -6,7 +6,7 @@ Globals:
     Timeout: 10
 
 Parameters:
-  CHECK_COAT_API:
+  CHECKCOATAPI:
     Type: String
     Description: "API key for authentication"
 
@@ -30,7 +30,7 @@ Resources:
               produces:
                 - application/json
               responses:
-                200:
+                "200":
                   description: "200 response"
               x-amazon-apigateway-integration:
                 uri:
@@ -46,7 +46,7 @@ Resources:
               produces:
                 - application/json
               responses:
-                200:
+                "200":
                   description: "200 response"
               x-amazon-apigateway-integration:
                 uri:
@@ -62,7 +62,7 @@ Resources:
               produces:
                 - application/json
               responses:
-                200:
+                "200":
                   description: "200 response"
               x-amazon-apigateway-integration:
                 uri:
@@ -78,7 +78,7 @@ Resources:
               produces:
                 - application/json
               responses:
-                200:
+                "200":
                   description: "200 response"
               x-amazon-apigateway-integration:
                 uri:
@@ -98,7 +98,7 @@ Resources:
       Runtime: nodejs18.x
       Environment:
         Variables:
-          API_KEY: !Ref CHECK_COAT_API
+          API_KEY: !Ref CHECKCOATAPI
 
   SaveCommentToDB:
     Type: AWS::Serverless::Function
@@ -148,27 +148,31 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: should-i-web-app
-      AccessControl: PublicRead
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
 
   ReactAppBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket:
-        Ref: ReactAppBucket
+      Bucket: !Ref ReactAppBucket
       PolicyDocument:
+        Version: "2012-10-17"
         Statement:
-          - Action: "s3:GetObject"
-            Effect: "Allow"
-            Resource:
-              Fn::Join:
-                - ""
-                - - "arn:aws:s3:::"
-                  - Ref: ReactAppBucket
-                  - "/*"
+          - Sid: PublicReadGetObject
+            Effect: Allow
             Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Sub "arn:aws:s3:::${ReactAppBucket}/*"
+
 Outputs:
   ApiURL:
     Description: "API endpoint URL for Prod stage"
