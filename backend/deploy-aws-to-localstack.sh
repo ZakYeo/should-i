@@ -7,6 +7,7 @@ BUCKET_NAME="should-i-sam-artifacts"
 # Check if the stack exists, if it does, delete it for a fresh slate
 if aws --endpoint-url=http://localhost:4566 cloudformation describe-stacks --stack-name $STACK_NAME >/dev/null 2>&1; then
     echo "Stack $STACK_NAME exists. Deleting..."
+    aws --endpoint-url=http://localhost:4566 s3 rm s3://should-i-web-app --recursive
     samlocal delete --stack-name $STACK_NAME --region $REGION --no-prompts
 else
     echo "Stack $STACK_NAME does not exist. Skipping deletion."
